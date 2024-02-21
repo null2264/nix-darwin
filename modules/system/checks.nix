@@ -3,6 +3,9 @@
 with lib;
 
 let
+  # Similar to lib.escapeShellArg but escapes "s instead of 's, to allow for parameter expansion in shells
+  escapeDoubleQuote = arg: ''"${replaceStrings ["\""] ["\"\\\"\""] (toString arg)}"'';
+
   cfg = config.system.checks;
 
   linuxChanges = ''
@@ -188,7 +191,7 @@ let
   '';
 
   nixPath = ''
-    nixPath=${concatStringsSep ":" config.nix.nixPath}:$HOME/.nix-defexpr/channels
+    nixPath=${concatMapStringsSep ":" escapeDoubleQuote config.nix.nixPath}:$HOME/.nix-defexpr/channels
 
     linuxConfig=$(NIX_PATH=$nixPath nix-instantiate --find-file linux-config) || true
     if ! test -e "$linuxConfig"; then
