@@ -76,7 +76,6 @@
   #   serviceConfig.ProcessType = "Background";
   # };
 
-  services.nix-daemon.enable = true;
   # services.nix-daemon.enableSocketListener = true;
 
   nix.extraOptions = ''
