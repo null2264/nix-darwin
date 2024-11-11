@@ -11,6 +11,9 @@ with lib;
   systemd.services = mkForce {};
   systemd.user.services = mkForce {};
 
+  # Don't try to reload `nix-daemon`
+  nix.useDaemon = mkForce false;
+
   system.activationScripts.postUserActivation.text = mkAfter ''
     if [[ -L ~/.nix-defexpr/channels/nix-not-nixos ]]; then
         nix-channel --remove nix-not-nixos || true
