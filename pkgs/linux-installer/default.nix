@@ -79,7 +79,7 @@ stdenv.mkDerivation {
         fi
         case "$i" in
             y|Y)
-                nix-channel --add https://github.com/null2264/nix-darwin/archive/master.tar.gz nix-not-nixos
+                nix-channel --add https://github.com/null2264/nix-darwin/archive/dev/nix-not-nixos.tar.gz nix-not-nixos
                 nix-channel --update
                 ;;
         esac
@@ -93,7 +93,7 @@ stdenv.mkDerivation {
 
     echo >&2
     echo >&2 "    Open '$config' to get started."
-    echo >&2 "    See the README for more information: [0;34mhttps://github.com/null2264/nix-darwin/blob/master/README.md[0m"
+    echo >&2 "    See the README for more information: [0;34mhttps://github.com/null2264/nix-darwin/blob/nix-not-nixos/README.md[0m"
     echo >&2
     echo >&2 "    Please log out and log in again to make sure nix-not-nixos is properly loaded."
     echo >&2
