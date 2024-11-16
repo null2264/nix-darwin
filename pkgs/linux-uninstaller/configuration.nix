@@ -34,7 +34,7 @@ with lib;
             NIX_SHOULD_RESTART_DAEMON=1
         fi
 
-        [ NIX_SHOULD_RESTART_DAEMON = 1 ] && sudo systemctl restart nix-daemon
+        [ $NIX_SHOULD_RESTART_DAEMON = 1 ] && sudo systemctl restart nix-daemon
     fi
 
     # FIXME: Change users' shell back to /bin/zsh
