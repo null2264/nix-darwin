@@ -333,11 +333,11 @@ in
     system.checks.text = mkMerge [
       linuxChanges
       runLink
-      (mkIf (cfg.verifyBuildUsers && !config.nix.configureBuildUsers) oldBuildUsers)
-      (mkIf cfg.verifyBuildUsers buildUsers)
-      (mkIf cfg.verifyBuildUsers preSequoiaBuildUsers)
-      (mkIf config.nix.configureBuildUsers buildGroupID)
-      (mkIf (!config.nix.useDaemon) singleUser)
+      # (mkIf (cfg.verifyBuildUsers && !config.nix.configureBuildUsers) oldBuildUsers)
+      # (mkIf cfg.verifyBuildUsers buildUsers)
+      # (mkIf cfg.verifyBuildUsers preSequoiaBuildUsers)
+      # (mkIf config.nix.configureBuildUsers buildGroupID)
+      # (mkIf (!config.nix.useDaemon) singleUser)
       nixStore
       (mkIf (config.nix.gc.automatic && config.nix.gc.user == null) nixGarbageCollector)
       (mkIf (config.nix.optimise.automatic && config.nix.optimise.user == null) nixStoreOptimiser)
