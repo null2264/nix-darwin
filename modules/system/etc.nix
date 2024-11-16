@@ -68,7 +68,10 @@ in
             etcFileSha256Output=$(shasum -a 256 "$etcFile")
             etcFileSha256Hash=''${etcFileSha256Output%% *}
             for knownSha256Hash in ''${etcSha256Hashes[$subPath]}; do
-              if [[ $etcFileSha256Hash == "$knownSha256Hash" ]]; then
+              if [[
+                $etcFileSha256Hash == "$knownSha256Hash"
+                || $knownSha256Hash == "SKIP"
+              ]]; then
                 # Hash matches, OK to overwrite; go to the next file.
                 continue 2
               fi
