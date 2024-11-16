@@ -25,11 +25,11 @@ jobs:
       run: |
         git checkout gh-pages
         rm -rf manual
-        cp -R result/share/doc/darwin manual
+        cp -R result/share/doc/nix-not-nixos manual
         rm result
         git checkout master -- README.md
         git config user.name github-actions
         git config user.email github-actions@github.com
         git add --all
-        git commit -m "Update manual"
+        git commit -m "nix: Update manual"
         git push
