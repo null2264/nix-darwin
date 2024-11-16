@@ -58,19 +58,19 @@ in
       ${cfg.activationScripts.extraActivation.text}
       ${cfg.activationScripts.groups.text}
       ${cfg.activationScripts.users.text}
-      ${cfg.activationScripts.applications.text}
+      # FIXME: applications -> *.desktop?
       ${cfg.activationScripts.pam.text}
       ${cfg.activationScripts.patches.text}
       ${cfg.activationScripts.etc.text}
       ${cfg.activationScripts.defaults.text}
-      ${cfg.activationScripts.launchd.text}
+      # FIXME: launchd -> systemd
       ${cfg.activationScripts.nix-daemon.text}
       ${cfg.activationScripts.time.text}
       ${cfg.activationScripts.networking.text}
       ${cfg.activationScripts.power.text}
       ${cfg.activationScripts.keyboard.text}
       ${cfg.activationScripts.fonts.text}
-      ${cfg.activationScripts.nvram.text}
+      # FIXME: nvram, remove?
 
       ${cfg.activationScripts.postActivation.text}
 

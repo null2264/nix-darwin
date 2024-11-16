@@ -54,32 +54,32 @@ in
       default = 5;
     };
 
-    system.darwinLabel = mkOption {
+    system.linuxLabel = mkOption {
       type = types.str;
       description = "Label to be used in the names of generated outputs.";
     };
 
-    system.darwinVersion = mkOption {
+    system.linuxVersion = mkOption {
       internal = true;
       type = types.str;
-      default = "darwin${toString cfg.stateVersion}${cfg.darwinVersionSuffix}";
-      description = "The full darwin version (e.g. `darwin4.2abdb5a`).";
+      default = "nix-not-nixos${toString cfg.stateVersion}${cfg.linuxVersionSuffix}";
+      description = "The full nix-not-nixos version (e.g. `nix-not-nixos4.2abdb5a`).";
     };
 
-    system.darwinVersionSuffix = mkOption {
+    system.linuxVersionSuffix = mkOption {
       internal = true;
       type = types.str;
-      default = if cfg.darwinRevision != null
-        then ".${substring 0 7 cfg.darwinRevision}"
+      default = if cfg.linuxRevision != null
+        then ".${substring 0 7 cfg.linuxRevision}"
         else "";
-      description = "The short darwin version suffix (e.g. `.2abdb5a`).";
+      description = "The short nix-not-nixos version suffix (e.g. `.2abdb5a`).";
     };
 
-    system.darwinRevision = mkOption {
+    system.linuxRevision = mkOption {
       internal = true;
       type = types.nullOr types.str;
       default = gitRevision (toString ../..);
-      description = "The darwin git revision from which this configuration was built.";
+      description = "The nix-not-nixos git revision from which this configuration was built.";
     };
 
     system.nixpkgsRelease = mkOption {
@@ -124,18 +124,18 @@ in
   config = {
     # This default is set here rather than up there so that the options
     # documentation is not reprocessed on every commit
-    system.darwinLabel = mkDefault "${cfg.nixpkgsVersion}+${cfg.darwinVersion}";
+    system.linuxLabel = mkDefault "${cfg.nixpkgsVersion}+${cfg.linuxVersion}";
 
     assertions = [
       {
         assertion = options.system.stateVersion.highestPrio != (lib.mkOptionDefault { }).priority;
         message = ''
           The `system.stateVersion` option is not defined in your
-          nix-darwin configuration. The value is used to conditionalize
+          nix-not-nixos configuration. The value is used to conditionalize
           backwards‐incompatible changes in default settings. You should
-          usually set this once when installing nix-darwin on a new system
+          usually set this once when installing nix-not-nixos on a new system
           and then never change it (at least without reading all the relevant
-          entries in the changelog using `darwin-rebuild changelog`).
+          entries in the changelog using `linux-rebuild changelog`).
 
           You can use the current value for new installations as follows:
 

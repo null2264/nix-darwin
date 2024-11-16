@@ -89,18 +89,18 @@ in
   config = {
 
     system.build.toplevel = throwAssertions (showWarnings (stdenvNoCC.mkDerivation ({
-      name = "darwin-system-${cfg.darwinLabel}";
+      name = "not-nixos-system-${cfg.linuxLabel}";
       preferLocalBuild = true;
 
       nativeBuildInputs = [ pkgs.shellcheck ];
 
       activationScript = cfg.activationScripts.script.text;
       activationUserScript = cfg.activationScripts.userScript.text;
-      inherit (cfg) darwinLabel;
+      inherit (cfg) linuxLabel;
 
-      darwinVersionJson = (pkgs.formats.json {}).generate "darwin-version.json" (
+      linuxVersionJson = (pkgs.formats.json {}).generate "linux-version.json" (
         filterAttrs (k: v: v != null) {
-          inherit (config.system) darwinRevision nixpkgsRevision configurationRevision darwinLabel;
+          inherit (config.system) linuxRevision nixpkgsRevision configurationRevision linuxLabel;
         }
       );
 
@@ -109,21 +109,22 @@ in
 
         systemConfig=$out
 
-        mkdir -p $out/darwin
-        cp -f ${../../CHANGELOG} $out/darwin-changes
+        mkdir -p $out/linux
+        cp -f ${../../CHANGELOG} $out/linux-changes
 
         ln -s ${cfg.build.patches}/patches $out/patches
         ln -s ${cfg.build.etc}/etc $out/etc
         ln -s ${cfg.path} $out/sw
 
-        mkdir -p $out/Library
-        ln -s ${cfg.build.applications}/Applications $out/Applications
-        ln -s ${cfg.build.fonts}/Library/Fonts $out/Library/Fonts
-        ln -s ${cfg.build.launchd}/Library/LaunchAgents $out/Library/LaunchAgents
-        ln -s ${cfg.build.launchd}/Library/LaunchDaemons $out/Library/LaunchDaemons
+        # FIXME: Replace with linux eqv
+        #mkdir -p $out/Library
+        #ln -s ${cfg.build.applications}/Applications $out/Applications
+        #ln -s ${cfg.build.fonts}/Library/Fonts $out/Library/Fonts
+        #ln -s ${cfg.build.launchd}/Library/LaunchAgents $out/Library/LaunchAgents
+        #ln -s ${cfg.build.launchd}/Library/LaunchDaemons $out/Library/LaunchDaemons
 
-        mkdir -p $out/user/Library
-        ln -s ${cfg.build.launchd}/user/Library/LaunchAgents $out/user/Library/LaunchAgents
+        #mkdir -p $out/user/Library
+        #ln -s ${cfg.build.launchd}/user/Library/LaunchAgents $out/user/Library/LaunchAgents
 
         echo "$activationScript" > $out/activate
         substituteInPlace $out/activate --subst-var out
@@ -139,8 +140,8 @@ in
 
         echo -n "$systemConfig" > $out/systemConfig
 
-        echo -n "$darwinLabel" > $out/darwin-version
-        ln -s $darwinVersionJson $out/darwin-version.json
+        echo -n "$linuxLabel" > $out/linux-version
+        ln -s $linuxVersionJson $out/linux-version.json
         echo -n "$system" > $out/system
 
         ${cfg.systemBuilderCommands}
