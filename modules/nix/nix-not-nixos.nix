@@ -7,9 +7,9 @@ let
     nixPackage = config.nix.package;
   };
 
-  darwin-uninstaller = pkgs.callPackage ../../pkgs/darwin-uninstaller { };
+  linux-uninstaller = pkgs.callPackage ../../pkgs/linux-uninstaller { };
 
-  inherit (nix-tools) darwin-option darwin-rebuild darwin-version;
+  inherit (nix-tools) linux-option linux-rebuild linux-version;
 in
 
 {
@@ -19,7 +19,7 @@ in
       internal = true;
       default = false;
       description = ''
-        Disable darwin-rebuild and darwin-option. This is useful to shrink
+        Disable linux-rebuild and linux-option. This is useful to shrink
         systems which are not expected to rebuild or reconfigure themselves.
         Use at your own risk!
     '';
@@ -34,14 +34,14 @@ in
 
   config = {
     environment.systemPackages =
-      [ darwin-version ]
+      [ linux-version ]
       ++ lib.optionals (!config.system.disableInstallerTools) [
-        darwin-option
-        darwin-rebuild
-      ] ++ lib.optional config.system.includeUninstaller darwin-uninstaller;
+        linux-option
+        linux-rebuild
+      ] ++ lib.optional config.system.includeUninstaller linux-uninstaller;
 
     system.build = {
-      inherit darwin-option darwin-rebuild darwin-version;
+      inherit linux-option linux-rebuild linux-version;
     };
   };
 }

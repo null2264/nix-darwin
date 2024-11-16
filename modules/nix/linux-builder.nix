@@ -16,8 +16,8 @@ in
 
     package = mkOption {
       type = types.package;
-      default = pkgs.darwin.linux-builder;
-      defaultText = "pkgs.darwin.linux-builder";
+      default = pkgs.nix-not-nixos.linux-builder;
+      defaultText = "pkgs.nix-not-nixos.linux-builder";
       apply = pkg: pkg.override (old: {
         # the linux-builder package requires `modules` as an argument, so it's
         # always non-null.
@@ -137,7 +137,7 @@ in
 
     workingDirectory = mkOption {
       type = types.str;
-      default = "/var/lib/darwin-builder";
+      default = "/var/lib/linux-builder";
       description = ''
         The working directory of the Linux builder daemon process.
       '';
