@@ -227,6 +227,7 @@ in
       "fb5827cb4712b7e7932d438067ec4852c8955a9ff0f55e282473684623ebdfa1"  # macOS
       "c5a00c072c920f46216454978c44df044b2ec6d03409dc492c7bdcd92c94a110"  # official Nix installer
       "40b0d8751adae5b0100a4f863be5b75613a49f62706427e92604f7e04d2e2261"  # official Nix installer
+      "87809e49352a19224ab3ecf88d5f3869581e8c3391331570b0d1febb8800578f"  # official Nix installer
       "2af1b563e389d11b76a651b446e858116d7a20370d9120a7e9f78991f3e5f336"  # DeterminateSystems installer
     ];
 
