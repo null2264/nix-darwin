@@ -1,8 +1,8 @@
 { nixpkgs ? <nixpkgs>
 # Adapted from https://github.com/NixOS/nixpkgs/blob/e818264fe227ad8861e0598166cf1417297fdf54/pkgs/top-level/release.nix#L11
-, nix-darwin ? { }
+, nix-not-nixos ? { }
 , system ? builtins.currentSystem
-, supportedSystems ? [ "x86_64-darwin" "aarch64-darwin" ]
+, supportedSystems ? [ "x86_64-linux" "aarch64-linux" ]
 , scrubJobs ? true
 }:
 
@@ -37,7 +37,7 @@ let
           config = {
             system.stateVersion = lib.mkDefault config.system.maxStateVersion;
 
-            system.build.run-test = pkgs.runCommand "darwin-test-${testName}"
+            system.build.run-test = pkgs.runCommand "linux-test-${testName}"
               { allowSubstitutes = false; preferLocalBuild = true; }
               ''
                 #! ${pkgs.stdenv.shell}
@@ -59,12 +59,12 @@ let
   manual = buildFromConfig ({ lib, config, ... }: {
     system.stateVersion = lib.mkDefault config.system.maxStateVersion;
 
-    system.darwinVersionSuffix = let
-      shortRev = nix-darwin.shortRev or nix-darwin.dirtyShortRev or null;
+    system.linuxVersionSuffix = let
+      shortRev = nix-not-nixos.shortRev or nix-not-nixos.dirtyShortRev or null;
     in
       lib.mkIf (shortRev != null) ".${shortRev}";
-    system.darwinRevision = let
-      rev = nix-darwin.rev or nix-darwin.dirtyRev or null;
+    system.linuxRevision = let
+      rev = nix-not-nixos.rev or nix-not-nixos.dirtyRev or null;
     in
       lib.mkIf (rev != null) rev;
   }) (config: config.system.build.manual);
