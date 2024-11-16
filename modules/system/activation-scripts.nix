@@ -109,9 +109,9 @@ in
       ${cfg.activationScripts.checks.text}
       ${cfg.activationScripts.etcChecks.text}
       ${cfg.activationScripts.extraUserActivation.text}
-      ${cfg.activationScripts.userDefaults.text}
-      ${cfg.activationScripts.userLaunchd.text}
-      ${cfg.activationScripts.homebrew.text}
+      # FIXME: userDefaults (modules/users/...), remove dscl dependency
+      # FIXME: launchd -> systemd
+      # FIXME: homebrew, remove?
 
       ${cfg.activationScripts.postUserActivation.text}
 
