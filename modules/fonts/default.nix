@@ -30,10 +30,10 @@ in
     system.build.fonts = pkgs.runCommand "fonts"
       { preferLocalBuild = true; }
       ''
-        mkdir -p $out/Library/Fonts
+        mkdir -p $out/usr/share/fonts
         store_dir=${lib.escapeShellArg builtins.storeDir}
         while IFS= read -rd "" f; do
-          dest="$out/Library/Fonts/Nix Fonts/''${f#"$store_dir/"}"
+          dest="$out/usr/share/fonts/nix-fonts/''${f#"$store_dir/"}"
           mkdir -p "''${dest%/*}"
           ln -sf "$f" "$dest"
         done < <(
@@ -45,7 +45,10 @@ in
       '';
 
     system.activationScripts.fonts.text = ''
-      printf >&2 'setting up /Library/Fonts/Nix Fonts...\n'
+      printf >&2 'setting up /usr/share/fonts/nix-fonts...\n'
+
+      # Some distro probably doesn't have this directory by default.
+      mkdir -p /usr/share/fonts/
 
       # rsync uses the mtime + size of files to determine whether they
       # need to be copied by default. This is inadequate for Nix store
@@ -59,8 +62,8 @@ in
         --copy-links \
         --delete-during \
         --delete-missing-args \
-        "$systemConfig/Library/Fonts/Nix Fonts" \
-        '/Library/Fonts/'
+        "$systemConfig/usr/share/fonts/nix-fonts" \
+        '/usr/share/fonts/'
     '';
 
   };
