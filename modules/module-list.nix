@@ -52,7 +52,8 @@
   ./nix/nixpkgs-flake.nix
   ./environment
   ./fonts
-  ./launchd
+  ./launchd  # TODO: Remove
+  ./systemd
   ./power
   ./power/sleep.nix
   ./services/activate-system
