@@ -54,7 +54,6 @@
 
   services.yabai.enable = true;
   services.yabai.package = pkgs.yabai;
-  services.skhd.enable = true;
 
   # security.sandbox.profiles.fetch-nixpkgs-updates.closure = [ pkgs.cacert pkgs.git ];
   # security.sandbox.profiles.fetch-nixpkgs-updates.allowNetworking = true;

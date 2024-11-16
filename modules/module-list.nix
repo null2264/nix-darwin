@@ -87,7 +87,6 @@
   ./services/privoxy
   ./services/redis
   ./services/sketchybar
-  ./services/skhd
   ./services/spacebar
   ./services/spotifyd.nix
   ./services/synapse-bt.nix
