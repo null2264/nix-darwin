@@ -66,16 +66,16 @@ in
       description = "List of directories to be symlinked in {file}`/run/current-system/sw`.";
     };
 
-    environment.darwinConfig = mkOption {
+    environment.linuxConfig = mkOption {
       type = types.either types.path types.str;
-      default = "$HOME/.nixpkgs/darwin-configuration.nix";
+      default = "$HOME/.nixpkgs/linux-configuration.nix";
       description = ''
-        The path of the darwin configuration.nix used to configure the system,
-        this updates the default darwin-config entry in NIX_PATH. Since this
+        The path of the linux-configuration.nix used to configure the system,
+        this updates the default linux-config entry in NIX_PATH. Since this
         changes an environment variable it will only apply to new shells.
 
-        NOTE: Changing this requires running {command}`darwin-rebuild switch -I darwin-config=/path/to/configuration.nix`
-        the first time to make darwin-rebuild aware of the custom location.
+        NOTE: Changing this requires running {command}`linux-rebuild switch -I linux-config=/path/to/configuration.nix`
+        the first time to make linux-rebuild aware of the custom location.
       '';
     };
 
@@ -203,7 +203,7 @@ in
 
     system.build.setEnvironment = pkgs.writeText "set-environment" ''
       # Prevent this file from being sourced by child shells.
-      export __NIX_DARWIN_SET_ENVIRONMENT_DONE=1
+      export __NIX_LINUX_SET_ENVIRONMENT_DONE=1
 
       export PATH=${config.environment.systemPath}
       ${concatStringsSep "\n" exportVariables}
