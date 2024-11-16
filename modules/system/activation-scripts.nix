@@ -105,7 +105,7 @@ in
 
       # This should be running at the system level, but as user activation runs first
       # we run it here with sudo
-      ${cfg.activationScripts.createRun.text}
+      # FIXME: base.nix:createRun, remove?
       ${cfg.activationScripts.checks.text}
       ${cfg.activationScripts.etcChecks.text}
       ${cfg.activationScripts.extraUserActivation.text}
