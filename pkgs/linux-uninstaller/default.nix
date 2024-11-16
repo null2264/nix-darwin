@@ -13,24 +13,23 @@ let
     ];
   };
 in writeShellApplication {
-  name = "darwin-uninstaller";
+  name = "linux-uninstaller";
   text = ''
     while [ "$#" -gt 0 ]; do
       i="$1"; shift 1
       case "$i" in
         --help)
-          echo "darwin-uninstaller: [--help]"
+          echo "linux-uninstaller: [--help]"
           exit
           ;;
       esac
     done
 
     echo >&2
-    echo >&2 "Uninstalling nix-darwin, this will:"
+    echo >&2 "Uninstalling nix-not-nixos, this will:"
     echo >&2
-    echo >&2 "    - remove /Applications/Nix Apps symlink"
     echo >&2 "    - cleanup static /etc files"
-    echo >&2 "    - disable and remove all launchd services managed by nix-darwin"
+    echo >&2 "    - disable and remove all systemd services managed by nix-not-nixos"
     echo >&2 "    - restore daemon service from nix installer (only when this is a multi-user install)"
     echo >&2
 
@@ -45,21 +44,10 @@ in writeShellApplication {
       esac
     fi
 
-    ${uninstallSystem.system}/sw/bin/darwin-rebuild activate
+    ${uninstallSystem.system}/sw/bin/linux-rebuild activate
 
     if [[ -L /run/current-system ]]; then
       sudo rm /run/current-system
-    fi
-
-    if [[ -L /run ]]; then
-      if [[ -e /etc/synthetic.conf ]]; then
-        sudo sed -i -E '/^run[[:space:]]/d' /etc/synthetic.conf
-        sudo /System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -B &>/dev/null || true
-        sudo /System/Library/Filesystems/apfs.fs/Contents/Resources/apfs.util -t &>/dev/null || true
-        echo >&2 "NOTE: the /run symlink will be removed on reboot"
-      else
-        sudo rm /run
-      fi
     fi
 
     echo >&2
@@ -75,18 +63,19 @@ in writeShellApplication {
       echo >&2 "running uninstaller tests..."
       echo >&2
 
-      echo >&2 "checking darwin channel"
-      test -e ~/.nix-defexpr/channels/darwin && exit 1
+      echo >&2 "checking nix-not-nixos channel"
+      test -e ~/.nix-defexpr/channels/nix-not-nixos && exit 1
       echo >&2 "checking /etc"
       test -e /etc/static && exit 1
       echo >&2 "checking /run/current-system"
       test -e /run/current-system && exit 1
       if [[ $(stat -f '%Su' /nix/store) == "root" ]]; then
         echo >&2 "checking nix-daemon service"
-        launchctl print system/org.nixos.nix-daemon
+        systemctl cat nix-daemon
         pgrep -l nix-daemon
-        test -e /Library/LaunchDaemons/org.nixos.nix-daemon.plist
-        [[ "$(shasum -a 256 /Library/LaunchDaemons/org.nixos.nix-daemon.plist | awk '{print $1}')" == "$(shasum -a 256 /Library/LaunchDaemons/org.nixos.nix-daemon.plist | awk '{print $1}')" ]]
+        test -e /etc/systemd/system/nix-daemon.service
+        test -e /etc/systemd/system/nix-daemon.socket
+        [[ "$(shasum -a 256 /etc/systemd/system/nix-daemon.service | awk '{print $1}')" == "$(shasum -a 256 /etc/systemd/system/nix-daemon.socket | awk '{print $1}')" ]]
         echo >&2 ok
       fi
     '';

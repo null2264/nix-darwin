@@ -1,20 +1,20 @@
 {
-  description = "A collection of darwin modules";
+  description = "A collection of Linux but not nixOS modules";
 
   outputs = { self, nixpkgs }: let
     forAllSystems = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-darwin" "aarch64-linux" "x86_64-linux" ];
-    forDarwinSystems = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-darwin" ];
+    forLinuxSystems = nixpkgs.lib.genAttrs [ "aarch64-linux" "x86_64-linux" ];
 
     jobs = forAllSystems (system: import ./release.nix {
       inherit nixpkgs system;
 
-      nix-darwin = self;
+      nix-linux = self;
     });
   in {
     lib = {
       evalConfig = import ./eval-config.nix;
 
-      darwinSystem = args@{ modules, ... }: self.lib.evalConfig (
+      linuxSystem = args@{ modules, ... }: self.lib.evalConfig (
         { inherit (nixpkgs) lib; }
         // nixpkgs.lib.optionalAttrs (args ? pkgs) { inherit (args.pkgs) lib; }
         // builtins.removeAttrs args [ "system" "pkgs" "inputs" ]
@@ -37,8 +37,8 @@
 
               system.checks.verifyNixPath = lib.mkDefault false;
 
-              system.darwinVersionSuffix = ".${self.shortRev or self.dirtyShortRev or "dirty"}";
-              system.darwinRevision = let
+              system.linuxVersionSuffix = ".${self.shortRev or self.dirtyShortRev or "dirty"}";
+              system.linuxRevision = let
                 rev = self.rev or self.dirtyRev or null;
               in
                 lib.mkIf (rev != null) rev;
@@ -47,33 +47,33 @@
     };
 
     overlays.default = final: prev: {
-      inherit (prev.callPackage ./pkgs/nix-tools { }) darwin-rebuild darwin-option darwin-version;
+      inherit (prev.callPackage ./pkgs/nix-tools { }) linux-rebuild linux-option linux-version;
 
-      darwin-uninstaller = prev.callPackage ./pkgs/darwin-uninstaller { };
+      linux-uninstaller = prev.callPackage ./pkgs/linux-uninstaller { };
     };
 
-    darwinModules.hydra = ./modules/examples/hydra.nix;
-    darwinModules.lnl = ./modules/examples/lnl.nix;
-    darwinModules.simple = ./modules/examples/simple.nix;
+    linuxModules.hydra = ./modules/examples/hydra.nix;
+    linuxModules.lnl = ./modules/examples/lnl.nix;
+    linuxModules.simple = ./modules/examples/simple.nix;
 
     templates.default = {
       path = ./modules/examples/flake;
-      description = "nix flake init -t nix-darwin";
+      description = "nix flake init -t nix-not-nixos";
     };
 
-    checks = forDarwinSystems (system: jobs.${system}.tests // jobs.${system}.examples);
+    checks = forLinuxSystems (system: jobs.${system}.tests // jobs.${system}.examples);
 
     packages = forAllSystems (system: {
       inherit (jobs.${system}.docs) manualHTML manpages optionsJSON;
-    } // (nixpkgs.lib.optionalAttrs (nixpkgs.lib.hasSuffix "darwin" system) (let
+    } // (nixpkgs.lib.optionalAttrs (nixpkgs.lib.hasSuffix "linux" system) (let
       pkgs = import nixpkgs {
         inherit system;
         overlays = [ self.overlays.default ];
       };
     in {
-      default = self.packages.${system}.darwin-rebuild;
+      default = self.packages.${system}.linux-rebuild;
 
-      inherit (pkgs) darwin-option darwin-rebuild darwin-version darwin-uninstaller;
+      inherit (pkgs) linux-option linux-rebuild linux-version linux-uninstaller;
     })));
   };
 }

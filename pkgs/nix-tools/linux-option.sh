@@ -4,7 +4,7 @@ set -o pipefail
 export PATH=@path@:$PATH
 
 evalNix() {
-  nix-instantiate --eval --strict "${extraEvalFlags[@]}" -E "with import <darwin> {}; $*" 2>/dev/null
+  nix-instantiate --eval --strict "${extraEvalFlags[@]}" -E "with import <nix-not-nixos> {}; $*" 2>/dev/null
 }
 
 evalOpt() {

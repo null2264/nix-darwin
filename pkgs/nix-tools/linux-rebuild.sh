@@ -5,7 +5,7 @@ export PATH=@path@:$PATH
 
 
 showSyntax() {
-  echo "darwin-rebuild [--help] {edit | switch | activate | build | check | changelog}" >&2
+  echo "linux-rebuild [--help] {edit | switch | activate | build | check | changelog}" >&2
   echo "               [--list-generations] [{--profile-name | -p} name] [--rollback]" >&2
   echo "               [{--switch-generation | -G} generation] [--verbose...] [-v...]" >&2
   echo "               [-Q] [{--max-jobs | -j} number] [--cores number] [--dry-run]" >&2
@@ -22,15 +22,7 @@ showSyntax() {
 }
 
 sudo() {
-  # REMOVEME when support for macOS 10.13 is dropped
-  # macOS 10.13 does not support sudo --preserve-env so we make this conditional
-  if command sudo --help | grep -- --preserve-env= >/dev/null; then
-    # We use `env` before our command to ensure the preserved PATH gets checked
-    # when trying to resolve the command to execute
-    command sudo -H --preserve-env=PATH --preserve-env=SSH_CONNECTION env "$@"
-  else
-    command sudo -H "$@"
-  fi
+  command sudo -H --preserve-env=PATH --preserve-env=SSH_CONNECTION env "$@"
 }
 
 # Parse the command line.
@@ -149,10 +141,10 @@ if [ -z "$action" ]; then showSyntax; fi
 
 flakeFlags=(--extra-experimental-features 'nix-command flakes')
 
-# Use /etc/nix-darwin/flake.nix if it exists. It can be a symlink to the
+# Use /etc/nix-not-nixos/flake.nix if it exists. It can be a symlink to the
 # actual flake.
-if [[ -z $flake && -e /etc/nix-darwin/flake.nix && -z $noFlake ]]; then
-  flake="$(dirname "$(readlink -f /etc/nix-darwin/flake.nix)")"
+if [[ -z $flake && -e /etc/nix-not-nixos/flake.nix && -z $noFlake ]]; then
+  flake="$(dirname "$(readlink -f /etc/nix-not-nixos/flake.nix)")"
 fi
 
 # For convenience, use the hostname as the default configuration to
@@ -163,9 +155,9 @@ if [[ -n "$flake" ]]; then
        flakeAttr="${BASH_REMATCH[2]}"
     fi
     if [[ -z "$flakeAttr" ]]; then
-      flakeAttr=$(scutil --get LocalHostName)
+      flakeAttr=$(uname -n)
     fi
-    flakeAttr=darwinConfigurations.${flakeAttr}
+    flakeAttr=linuxConfigurations.${flakeAttr}
 fi
 
 if [ "$action" != build ]; then
@@ -177,9 +169,9 @@ if [ "$action" != build ]; then
 fi
 
 if [ "$action" = edit ]; then
-  darwinConfig=$(nix-instantiate --find-file darwin-config)
+  linuxConfig=$(nix-instantiate --find-file linux-config)
   if [ -z "$flake" ]; then
-    exec "${EDITOR:-vi}" "$darwinConfig"
+    exec "${EDITOR:-vi}" "$linuxConfig"
   else
     exec nix "${flakeFlags[@]}" edit "${extraLockFlags[@]}" -- "$flake#$flakeAttr"
   fi
@@ -188,7 +180,7 @@ fi
 if [ "$action" = switch ] || [ "$action" = build ] || [ "$action" = check ] || [ "$action" = changelog ]; then
   echo "building the system configuration..." >&2
   if [ -z "$flake" ]; then
-    systemConfig="$(nix-build '<darwin>' "${extraBuildFlags[@]}" -A system)"
+    systemConfig="$(nix-build '<nix-not-nixos>' "${extraBuildFlags[@]}" -A system)"
   else
     systemConfig=$(nix "${flakeFlags[@]}" build --json \
       "${extraBuildFlags[@]}" "${extraLockFlags[@]}" \
@@ -210,7 +202,7 @@ if [ "$action" = rollback ]; then
 fi
 
 if [ "$action" = activate ]; then
-  systemConfig=$(readlink -f "${0%*/sw/bin/darwin-rebuild}")
+  systemConfig=$(readlink -f "${0%*/sw/bin/linux-rebuild}")
 fi
 
 if [ -z "$systemConfig" ]; then exit 0; fi
@@ -234,7 +226,7 @@ if [ "$action" = switch ] || [ "$action" = activate ] || [ "$action" = rollback 
 fi
 
 if [ "$action" = changelog ]; then
-  ${PAGER:-less} -- "$systemConfig/darwin-changes"
+  ${PAGER:-less} -- "$systemConfig/linux-changes"
 fi
 
 if [ "$action" = check ]; then
