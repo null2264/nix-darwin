@@ -56,44 +56,6 @@
   ./systemd
   ./power
   ./power/sleep.nix
-  ./services/activate-system
-  ./services/aerospace
-  ./services/autossh.nix
-  ./services/chunkwm.nix
-  ./services/cachix-agent.nix
-  ./services/dnsmasq.nix
-  ./services/emacs.nix
-  ./services/github-runner
-  ./services/gitlab-runner.nix
-  ./services/hercules-ci-agent
-  ./services/ipfs.nix
-  ./services/karabiner-elements
-  ./services/khd
-  ./services/kwm
-  ./services/lorri.nix
-  ./services/mail/offlineimap.nix
-  ./services/mopidy.nix
-  ./services/monitoring/telegraf.nix
-  ./services/monitoring/netdata.nix
-  ./services/monitoring/prometheus-node-exporter.nix
-  ./services/netbird.nix
-  ./services/nix-daemon.nix
-  ./services/nix-gc
-  ./services/nix-optimise
-  ./services/ofborg
-  ./services/postgresql
-  ./services/privoxy
-  ./services/redis
-  ./services/sketchybar
-  ./services/spacebar
-  ./services/spotifyd.nix
-  ./services/synapse-bt.nix
-  ./services/synergy
-  ./services/tailscale.nix
-  ./services/trezord.nix
-  ./services/wg-quick.nix
-  ./services/nextdns
-  ./services/jankyborders
   ./programs/bash
   ./programs/direnv.nix
   ./programs/fish.nix
