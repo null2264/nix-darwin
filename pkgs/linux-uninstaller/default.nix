@@ -75,7 +75,8 @@ in writeShellApplication {
       test -e /run/current-system && exit 1
       if [[ $(stat -c '%U' /nix/store) == "root" ]]; then
         echo >&2 "checking nix-daemon service"
-        systemctl cat nix-daemon
+        systemctl cat nix-daemon.service
+        systemctl cat nix-daemon.socket
         pgrep -l nix-daemon
         test -e /etc/systemd/system/nix-daemon.service
         test -e /etc/systemd/system/nix-daemon.socket
