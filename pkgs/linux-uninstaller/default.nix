@@ -79,7 +79,8 @@ in writeShellApplication {
         pgrep -l nix-daemon
         test -e /etc/systemd/system/nix-daemon.service
         test -e /etc/systemd/system/nix-daemon.socket
-        [[ "$(shasum -a 256 /etc/systemd/system/nix-daemon.service | awk '{print $1}')" == "$(shasum -a 256 /etc/systemd/system/nix-daemon.socket | awk '{print $1}')" ]]
+        [[ "$(shasum -a 256 /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.service | awk '{print $1}')" == "$(shasum -a 256 /etc/systemd/system/nix-daemon.service | awk '{print $1}')" ]]
+        [[ "$(shasum -a 256 /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.socket | awk '{print $1}')" == "$(shasum -a 256 /etc/systemd/system/nix-daemon.socket | awk '{print $1}')" ]]
         echo >&2 ok
       fi
     '';
