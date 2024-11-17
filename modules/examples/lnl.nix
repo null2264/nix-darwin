@@ -52,9 +52,6 @@
       pkgs.qes
     ];
 
-  services.yabai.enable = true;
-  services.yabai.package = pkgs.yabai;
-
   # security.sandbox.profiles.fetch-nixpkgs-updates.closure = [ pkgs.cacert pkgs.git ];
   # security.sandbox.profiles.fetch-nixpkgs-updates.allowNetworking = true;
   # security.sandbox.profiles.fetch-nixpkgs-updates.writablePaths = [ (toString ~/Code/nixos/nixpkgs) ];
