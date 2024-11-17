@@ -31,13 +31,19 @@ with lib;
 
     # If the Nix Store is owned by root then we're on a multi-user system
     if [[ -O /nix/store ]]; then
+        trySudoCopy() {
+            [[ "$(shasum -a 256 "$1" | awk '{print $1}')" == "$(shasum -a 256 "$2" | awk '{print $1}')" ]] \
+                || sudo cp "$1" "$2"
+        }
+
         NIX_SHOULD_RESTART_DAEMON=0
+
         if [[ -e /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.service ]]; then
-            sudo cp /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.service /etc/systemd/system/nix-daemon.service
+            trySudoCopy /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.service /etc/systemd/system/nix-daemon.service
             NIX_SHOULD_RESTART_DAEMON=1
         fi
         if [[ -e /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.socket ]]; then
-            sudo cp /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.socket /etc/systemd/system/nix-daemon.socket
+            trySudoCopy /nix/var/nix/profiles/default/lib/systemd/system/nix-daemon.socket /etc/systemd/system/nix-daemon.socket
             NIX_SHOULD_RESTART_DAEMON=1
         fi
 
