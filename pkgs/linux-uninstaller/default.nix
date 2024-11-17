@@ -32,7 +32,7 @@ in writeShellApplication {
     echo >&2 "      - /usr/share/fonts/nix-fonts"
     echo >&2 "    - cleanup static /etc files"
     echo >&2 "    - disable and remove all systemd services managed by nix-not-nixos"
-    if [[ $(stat -f '%Su' /nix/store) == "root" ]]; then
+    if [[ $(stat -c '%U' /nix/store) == "root" ]]; then
       echo >&2 "    - restore nix-daemon service from nix installer as this is a multi-user install"
     fi
     echo >&2
@@ -73,7 +73,7 @@ in writeShellApplication {
       test -e /etc/static && exit 1
       echo >&2 "checking /run/current-system"
       test -e /run/current-system && exit 1
-      if [[ $(stat -f '%Su' /nix/store) == "root" ]]; then
+      if [[ $(stat -c '%U' /nix/store) == "root" ]]; then
         echo >&2 "checking nix-daemon service"
         systemctl cat nix-daemon
         pgrep -l nix-daemon
