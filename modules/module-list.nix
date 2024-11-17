@@ -63,7 +63,6 @@
   ./services/cachix-agent.nix
   ./services/dnsmasq.nix
   ./services/emacs.nix
-  ./services/eternal-terminal.nix
   ./services/github-runner
   ./services/gitlab-runner.nix
   ./services/hercules-ci-agent
