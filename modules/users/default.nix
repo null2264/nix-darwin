@@ -1,3 +1,4 @@
+# FIXME: Re-enable users/groups management
 { config, lib, pkgs, ... }:
 
 let
