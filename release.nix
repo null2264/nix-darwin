@@ -84,8 +84,9 @@ in {
   tests.environment-path = makeTest ./tests/environment-path.nix;
   tests.environment-terminfo = makeTest ./tests/environment-terminfo.nix;
   tests.homebrew = makeTest ./tests/homebrew.nix;
-  tests.launchd-daemons = makeTest ./tests/launchd-daemons.nix;
-  tests.launchd-setenv = makeTest ./tests/launchd-setenv.nix;
+  # FIXME: Replace with systemd
+  # tests.launchd-daemons = makeTest ./tests/launchd-daemons.nix;
+  # tests.launchd-setenv = makeTest ./tests/launchd-setenv.nix;
   tests.networking-hostname = makeTest ./tests/networking-hostname.nix;
   tests.networking-networkservices = makeTest ./tests/networking-networkservices.nix;
   tests.nixpkgs-overlays = makeTest ./tests/nixpkgs-overlays.nix;
