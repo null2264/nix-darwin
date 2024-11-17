@@ -59,7 +59,6 @@
   ./services/activate-system
   ./services/aerospace
   ./services/autossh.nix
-  ./services/buildkite-agents.nix
   ./services/chunkwm.nix
   ./services/cachix-agent.nix
   ./services/dnsmasq.nix
