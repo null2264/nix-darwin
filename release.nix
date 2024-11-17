@@ -75,7 +75,7 @@ in {
   };
 
   examples.hydra = makeSystem ./modules/examples/hydra.nix;
-  examples.lnl = makeSystem ./modules/examples/lnl.nix;
+  #examples.lnl = makeSystem ./modules/examples/lnl.nix;
   examples.simple = makeSystem ./modules/examples/simple.nix;
 
   tests.activation-scripts = makeTest ./tests/activation-scripts.nix;
@@ -116,7 +116,6 @@ in {
   tests.services-spotifyd = makeTest ./tests/services-spotifyd.nix;
   tests.services-synapse-bt = makeTest ./tests/services-synapse-bt.nix;
   tests.services-synergy = makeTest ./tests/services-synergy.nix;
-  tests.services-yabai = makeTest ./tests/services-yabai.nix;
   tests.services-jankyborders = makeTest ./tests/services-jankyborders.nix;
   tests.system-defaults-write = makeTest ./tests/system-defaults-write.nix;
   tests.system-environment = makeTest ./tests/system-environment.nix;

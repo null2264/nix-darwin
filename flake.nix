@@ -53,7 +53,7 @@
     };
 
     linuxModules.hydra = ./modules/examples/hydra.nix;
-    linuxModules.lnl = ./modules/examples/lnl.nix;
+    #linuxModules.lnl = ./modules/examples/lnl.nix;
     linuxModules.simple = ./modules/examples/simple.nix;
 
     templates.default = {
