@@ -17,8 +17,8 @@ in
     pre-build-hook =
   '';
 
-  nix.gc.automatic = true;
-  nix.gc.options = "--max-freed $((25 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | awk '{ print $4 }')))";
+  # nix.gc.automatic = true;
+  # nix.gc.options = "--max-freed $((25 * 1024**3 - 1024 * $(df -P -k /nix/store | tail -n 1 | awk '{ print $4 }')))";
 
   environment.etc."per-user/hydra/ssh/authorized_keys".text = lib.concatStringsSep "\n"
     [ "command=\"${environment} ${config.nix.package}/bin/nix-store --serve --write\" ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCVsc0pHGsskoayziMhA2e59bHPWe0bbKgusmqhuJFBGQ1BAk9UmPzKCWE3nCiV6CLD1+SygVkBjb06DYtc+94BnzviCa9qZtL0G4+2vhp6x8OvXh8xlf/eWw3k5MWlvu+kjJFpbW8wHWTiUqzH+uEeHklAosT0lFNjiIYd/Vs3JAezhUR62a6c7ZjWOd5F7ALGEKzOiwC4i37kSgGsIWNCbe0Ku7gyr718zhMGeyxax6saHhnkSpIB+7d6oHhKeiJSFMWctNmz1/qxXUPbxNaJvqgdKlVHhN+B7x/TIbkVr5pTC59Okx9LTcpflFIv79VT+Gf1K7VypZpSvJjG0xFRt8iDs1+ssWFBfvpo94vUbZ+ZwMDcBGR5iJeO41Gj5fYn5aaDl32RXfJ9Fkwael1L6pcXtkIc66jk+KQQpgoeNj8Y3Emntpqva/2AM41wDDvr5tKp5KhEKFLM95CoiWq+g88pZLcpqLK7wooDVqNkVUEbMaj9lBN0AzU9mcsIRGvTa6CmWAdBvwqS2fRZD97Oarqct9AWgb0X6mOUq9BJNi4i4xvjgnVkylLwtLUnibR/PeXMtkb9bv6BEZXNf5ACqxSjKXJyaIHI65I5TILCr5eEgaujgvmkREn6U3T1NZAUIeVe9aVYLqehYh79OHUBzggoHqidRrXBB/6zdg9UgQ=="

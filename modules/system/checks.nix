@@ -350,7 +350,7 @@ in
       # (mkIf config.nix.configureBuildUsers buildGroupID)
       # nixDaemon
       nixStore
-      (mkIf (config.nix.gc.automatic && config.nix.gc.user == null) nixGarbageCollector)
+      #(mkIf (config.nix.gc.automatic && config.nix.gc.user == null) nixGarbageCollector)
       (mkIf (config.nix.optimise.automatic && config.nix.optimise.user == null) nixStoreOptimiser)
       (mkIf cfg.verifyNixChannels nixChannels)
       nixInstaller
