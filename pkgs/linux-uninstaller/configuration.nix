@@ -18,6 +18,10 @@ with lib;
   '';
 
   system.activationScripts.postActivation.text = mkAfter ''
+    if [[ -L /usr/share/fonts/nix-fonts ]]; then
+        rm /usr/share/fonts/nix-fonts
+    fi
+
     if [[ -L /etc/static ]]; then
         rm /etc/static
     fi

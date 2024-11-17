@@ -28,6 +28,8 @@ in writeShellApplication {
     echo >&2
     echo >&2 "Uninstalling nix-not-nixos, this will:"
     echo >&2
+    echo >&2 "    - remove nix-not-nixo's symlinks"
+    echo >&2 "      - /usr/share/fonts/nix-fonts"
     echo >&2 "    - cleanup static /etc files"
     echo >&2 "    - disable and remove all systemd services managed by nix-not-nixos"
     echo >&2 "    - restore daemon service from nix installer (only when this is a multi-user install)"
