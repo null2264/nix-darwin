@@ -112,6 +112,7 @@ in
     ];
     environment.etc."bash.bashrc".knownSha256Hashes = [
       "af4f09eb27cb7f140dfee7f3285574a68ca50ac1db2019652cef4196ee346307"  # Debian
+      "29128d49b590338131373ec431a59c0b5318330050aac9ac61d5098517ac9a25"  # Ubuntu
       "89053ee31f8607bf4371cba46864bda07c51625fd19c6806a9b7bbf526aaf7f4"  # Arch Linux
     ];
 
