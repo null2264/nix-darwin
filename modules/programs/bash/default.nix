@@ -111,7 +111,8 @@ in
       "08ffbf991a9e25839d38b80a0d3bce3b5a6c84b9be53a4b68949df4e7e487bb7"  # DeterminateSystems installer
     ];
     environment.etc."bash.bashrc".knownSha256Hashes = [
-      "89053ee31f8607bf4371cba46864bda07c51625fd19c6806a9b7bbf526aaf7f4"
+      "af4f09eb27cb7f140dfee7f3285574a68ca50ac1db2019652cef4196ee346307"  # Debian
+      "89053ee31f8607bf4371cba46864bda07c51625fd19c6806a9b7bbf526aaf7f4"  # Arch Linux
     ];
 
   };
