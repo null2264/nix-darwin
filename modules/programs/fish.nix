@@ -167,7 +167,7 @@ in
         if cfg.useBabelfish
         then ''
           # source the NixOS environment config
-          if [ -z "$__NIX_DARWIN_SET_ENVIRONMENT_DONE" ]
+          if [ -z "$__NIX_LINUX_SET_ENVIRONMENT_DONE" ]
             source /etc/fish/setEnvironment.fish
           end
         ''
@@ -177,7 +177,7 @@ in
           set fish_function_path ${fenvFunctionsDir} $__fish_datadir/functions
 
           # source the NixOS environment config
-          if [ -z "$__NIX_DARWIN_SET_ENVIRONMENT_DONE" ]
+          if [ -z "$__NIX_LINUX_SET_ENVIRONMENT_DONE" ]
             fenv source ${config.system.build.setEnvironment}
           end
 
