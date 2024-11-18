@@ -1,8 +1,8 @@
-# nix-darwin Configuration Options {#book-darwin-manual}
-## Version @DARWIN_VERSION@
+# nix-not-nixos Configuration Options {#book-linux-manual}
+## Version @LINUX_VERSION@
 
 ```{=include=} options
 id-prefix: opt-
 list-id: configuration-variable-list
-source: @DARWIN_OPTIONS_JSON@
+source: @LINUX_OPTIONS_JSON@
 ```

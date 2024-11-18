@@ -211,7 +211,7 @@ let
     if ! test -e "$linuxPath"; then
         echo "[1;31merror: Changed <nix-not-nixos> but target does not exist, aborting activation[0m" >&2
         echo "Add the nix-not-nixos repo as a channel or set nix.nixPath:" >&2
-        echo "$ nix-channel --add https://github.com/null2264/nix-darwin/archive/dev/nix-not-nixos.tar.gz nix-not-nixos" >&2
+        echo "$ nix-channel --add https://github.com/null2264/nix-darwin/archive/master.tar.gz nix-not-nixos" >&2
         echo "$ nix-channel --update" >&2
         echo >&2
         echo "or set" >&2

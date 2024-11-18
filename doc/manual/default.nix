@@ -25,12 +25,12 @@ let
   optionsDoc = buildPackages.nixosOptionsDoc {
     inherit options;
     transformOptions = opt: opt // {
-      # Clean up declaration sites to not refer to the nix-darwin source tree.
+      # Clean up declaration sites to not refer to the nix-not-nixos source tree.
       # TODO: handle `extraSources`? (it's not set anywhere)
       declarations = map
         (decl:
           if lib.hasPrefix (toString prefix) (toString decl) then
-            gitHubDeclaration "LnL7" "nix-darwin" revision
+            gitHubDeclaration "null2264" "nix-darwin" revision
               (lib.removePrefix "/"
                 (lib.removePrefix (toString prefix) (toString decl)))
           # TODO: handle this in a better way (may require upstream
@@ -46,38 +46,38 @@ in rec {
   # TODO: Use `optionsDoc.optionsJSON` directly once upstream
   # `nixosOptionsDoc` is more customizable.
   optionsJSON = runCommand "options.json"
-    { meta.description = "List of nix-darwin options in JSON format"; }
+    { meta.description = "List of nix-not-nixos options in JSON format"; }
     ''
       mkdir -p $out/{share/doc,nix-support}
-      cp -a ${optionsDoc.optionsJSON}/share/doc/nixos $out/share/doc/darwin
+      cp -a ${optionsDoc.optionsJSON}/share/doc/nixos $out/share/doc/nix-not-nixos
       substitute \
         ${optionsDoc.optionsJSON}/nix-support/hydra-build-products \
         $out/nix-support/hydra-build-products \
         --replace \
           '${optionsDoc.optionsJSON}/share/doc/nixos' \
-          "$out/share/doc/darwin"
+          "$out/share/doc/nix-not-nixos"
     '';
 
-  # Generate the nix-darwin manual.
-  manualHTML = runCommand "darwin-manual-html"
+  # Generate the nix-not-nixos manual.
+  manualHTML = runCommand "linux-manual-html"
     { nativeBuildInputs = [ buildPackages.nixos-render-docs ];
       styles = lib.sourceFilesBySuffices (pkgs.path + "/doc") [ ".css" ];
-      meta.description = "The Darwin manual in HTML format";
+      meta.description = "The nix-not-nixos manual in HTML format";
       allowedReferences = ["out"];
     }
     ''
       # Generate the HTML manual.
-      dst=$out/share/doc/darwin
+      dst=$out/share/doc/nix-not-nixos
       mkdir -p $dst
 
       cp $styles/style.css $dst
       cp -r ${pkgs.documentation-highlighter} $dst/highlightjs
 
       substitute ${./manual.md} manual.md \
-        --replace '@DARWIN_VERSION@' "${version}" \
+        --replace '@LINUX_VERSION@' "${version}" \
         --replace \
-          '@DARWIN_OPTIONS_JSON@' \
-          ${optionsJSON}/share/doc/darwin/options.json
+          '@LINUX_OPTIONS_JSON@' \
+          ${optionsJSON}/share/doc/nix-not-nixos/options.json
 
       # Pass --redirects option if nixos-render-docs supports it
       if nixos-render-docs manual html --help | grep --silent -E '^\s+--redirects\s'; then
@@ -104,13 +104,13 @@ in rec {
       echo "doc manual $dst" >> $out/nix-support/hydra-build-products
     '';
 
-  # Index page of the nix-darwin manual.
-  manualHTMLIndex = "${manualHTML}/share/doc/darwin/index.html";
+  # Index page of the nix-not-nixos manual.
+  manualHTMLIndex = "${manualHTML}/share/doc/nix-not-nixos/index.html";
 
-  manualEpub = builtins.throw "The nix-darwin EPUB manual has been removed.";
+  manualEpub = builtins.throw "The nix-not-nixos EPUB manual has been removed.";
 
-  # Generate the nix-darwin manpages.
-  manpages = runCommand "darwin-manpages"
+  # Generate the nix-not-nixos manpages.
+  manpages = runCommand "linux-manpages"
     { nativeBuildInputs = [ buildPackages.nixos-render-docs ];
       allowedReferences = ["out"];
     }
@@ -119,28 +119,28 @@ in rec {
       mkdir -p $out/share/man/man5
       nixos-render-docs -j $NIX_BUILD_CORES options manpage \
         --revision ${lib.escapeShellArg revision} \
-        ${optionsJSON}/share/doc/darwin/options.json \
+        ${optionsJSON}/share/doc/nix-not-nixos/options.json \
         $out/share/man/man5/configuration.nix.5
 
       # TODO: get these parameterized in upstream nixos-render-docs
       sed -i -e '
-        /^\.TH / s|NixOS|nix-darwin|g
+        /^\.TH / s|NixOS|nix-not-nixos|g
 
         /^\.SH "NAME"$/ {
           N
-          s|NixOS|nix-darwin|g
+          s|NixOS|nix-not-nixos|g
         }
 
         /^\.SH "DESCRIPTION"$/ {
           N; N
           s|/etc/nixos/configuration|configuration|g
-          s|NixOS|nix-darwin|g
-          s|nixos|nix-darwin|g
+          s|NixOS|nix-not-nixos|g
+          s|nixos|nix-not-nixos|g
         }
 
         /\.SH "AUTHORS"$/ {
           N; N
-          s|Eelco Dolstra and the Nixpkgs/NixOS contributors|Daiderd Jordan and the nix-darwin contributors|g
+          s|Eelco Dolstra and the Nixpkgs/NixOS contributors|Daiderd Jordan and the nix-not-nixos contributors|g
         }
       ' $out/share/man/man5/configuration.nix.5
     '';

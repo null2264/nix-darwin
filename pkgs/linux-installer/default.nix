@@ -74,7 +74,7 @@ stdenv.mkDerivation {
         fi
         case "$i" in
             y|Y)
-                nix-channel --add https://github.com/null2264/nix-darwin/archive/dev/nix-not-nixos.tar.gz nix-not-nixos
+                nix-channel --add https://github.com/null2264/nix-darwin/archive/master.tar.gz nix-not-nixos
                 nix-channel --update
                 ;;
         esac

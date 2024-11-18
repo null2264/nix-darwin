@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-not-nixos.url = "github:null2264/nix-darwin/dev/nix-not-nixos";
+    nix-not-nixos.url = "github:null2264/nix-darwin";
     nix-not-nixos.inputs.nixpkgs.follows = "nixpkgs";
   };
 
