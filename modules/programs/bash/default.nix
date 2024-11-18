@@ -105,16 +105,16 @@ in
 
     environment.etc."bashrc".knownSha256Hashes = [
       "444c716ac2ccd9e1e3347858cb08a00d2ea38e8c12fdc5798380dc261e32e9ef"  # macOS
-      "617b39e36fa69270ddbee19ddc072497dbe7ead840cbd442d9f7c22924f116f4"  # official Nix installer
-      "6be16cf7c24a3c6f7ae535c913347a3be39508b3426f5ecd413e636e21031e66"  # official Nix installer
-      "87809e49352a19224ab3ecf88d5f3869581e8c3391331570b0d1febb8800578f"  # official Nix installer
-      "08ffbf991a9e25839d38b80a0d3bce3b5a6c84b9be53a4b68949df4e7e487bb7"  # DeterminateSystems installer
-    ];
-    environment.etc."bash.bashrc".knownSha256Hashes = [
       "af4f09eb27cb7f140dfee7f3285574a68ca50ac1db2019652cef4196ee346307"  # Debian
       "29128d49b590338131373ec431a59c0b5318330050aac9ac61d5098517ac9a25"  # Ubuntu
       "89053ee31f8607bf4371cba46864bda07c51625fd19c6806a9b7bbf526aaf7f4"  # Arch Linux
+      "617b39e36fa69270ddbee19ddc072497dbe7ead840cbd442d9f7c22924f116f4"  # official Nix installer
+      "6be16cf7c24a3c6f7ae535c913347a3be39508b3426f5ecd413e636e21031e66"  # official Nix installer
+      "87809e49352a19224ab3ecf88d5f3869581e8c3391331570b0d1febb8800578f"  # official Nix installer
+      "a8d25482dbf03f13221c6b32654021a1ca23dcc179d9447b936dca19258cb9be"  # official Nix installer
+      "08ffbf991a9e25839d38b80a0d3bce3b5a6c84b9be53a4b68949df4e7e487bb7"  # DeterminateSystems installer
     ];
+    environment.etc."bash.bashrc".knownSha256Hashes = config.environment.etc."bashrc".knownSha256Hashes;
 
   };
 }
