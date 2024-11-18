@@ -52,10 +52,6 @@
       pkgs.qes
     ];
 
-  services.yabai.enable = true;
-  services.yabai.package = pkgs.yabai;
-  services.skhd.enable = true;
-
   # security.sandbox.profiles.fetch-nixpkgs-updates.closure = [ pkgs.cacert pkgs.git ];
   # security.sandbox.profiles.fetch-nixpkgs-updates.allowNetworking = true;
   # security.sandbox.profiles.fetch-nixpkgs-updates.writablePaths = [ (toString ~/Code/nixos/nixpkgs) ];
@@ -223,19 +219,19 @@
 
   programs.zsh.loginShellInit = ''
     reexec() {
-        unset __NIX_DARWIN_SET_ENVIRONMENT_DONE
+        unset __NIX_LINUX_SET_ENVIRONMENT_DONE
         unset __ETC_ZPROFILE_SOURCED __ETC_ZSHENV_SOURCED __ETC_ZSHRC_SOURCED
         exec $SHELL -c 'echo >&2 "reexecuting shell: $SHELL" && exec $SHELL -l'
     }
 
     reexec-tmux() {
-        unset __NIX_DARWIN_SET_ENVIRONMENT_DONE
+        unset __NIX_LINUX_SET_ENVIRONMENT_DONE
         unset __ETC_ZPROFILE_SOURCED __ETC_ZSHENV_SOURCED __ETC_ZSHRC_SOURCED
         exec tmux new-session -A -s _ "$@"
     }
 
     reexec-sandbox() {
-        unset __NIX_DARWIN_SET_ENVIRONMENT_DONE
+        unset __NIX_LINUX_SET_ENVIRONMENT_DONE
         unset __ETC_ZPROFILE_SOURCED __ETC_ZSHENV_SOURCED __ETC_ZSHRC_SOURCED
         export IN_NIX_SANDBOX=1
         exec /usr/bin/sandbox-exec -f /etc/nix/user-sandbox.sb $SHELL -l

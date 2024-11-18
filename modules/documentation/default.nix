@@ -23,8 +23,8 @@ let
     the path above will be shown and not e.g. `${config.services.foo.package}`. */
   manual = import ../../doc/manual {
     inherit pkgs config;
-    version = config.system.darwinVersion;
-    revision = config.system.darwinRevision;
+    version = config.system.linuxVersion;
+    revision = config.system.linuxRevision;
     inherit (config.system) nixpkgsRevision;
     options =
       let
@@ -45,7 +45,7 @@ let
       in scrubbedEval.options;
   };
 
-  helpScript = pkgs.writeScriptBin "darwin-help"
+  helpScript = pkgs.writeScriptBin "linux-help"
     ''
       #! ${pkgs.stdenv.shell} -e
       open ${manual.manualHTMLIndex}

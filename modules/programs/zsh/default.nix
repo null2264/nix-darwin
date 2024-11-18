@@ -12,6 +12,101 @@ let
   fzfCompletion = ./fzf-completion.zsh;
   fzfGit = ./fzf-git.zsh;
   fzfHistory = ./fzf-history.zsh;
+
+  zshenv = ''
+    # /etc/zshenv: DO NOT EDIT -- this file has been generated automatically.
+    # This file is read for all shells.
+
+    # Only execute this file once per shell.
+    if [ -n "''${__ETC_ZSHENV_SOURCED-}" ]; then return; fi
+    __ETC_ZSHENV_SOURCED=1
+
+    if [[ -o rcs ]]; then
+      if [ -z "''${__NIX_LINUX_SET_ENVIRONMENT_DONE-}" ]; then
+        . ${config.system.build.setEnvironment}
+      fi
+
+      # Tell zsh how to find installed completions
+      for p in ''${(z)NIX_PROFILES}; do
+        fpath=($p/share/zsh/site-functions $p/share/zsh/$ZSH_VERSION/functions $p/share/zsh/vendor-completions $fpath)
+      done
+
+      ${cfg.shellInit}
+    fi
+
+    # Read system-wide modifications.
+    if test -f /etc/zshenv.local; then
+      source /etc/zshenv.local
+    elif test -f /etc/zsh/zshenv.local; then
+      source /etc/zsh/zshenv.local
+    fi
+  '';
+
+  zprofile = ''
+    # /etc/zprofile: DO NOT EDIT -- this file has been generated automatically.
+    # This file is read for login shells.
+
+    # Only execute this file once per shell.
+    if [ -n "''${__ETC_ZPROFILE_SOURCED-}" ]; then return; fi
+    __ETC_ZPROFILE_SOURCED=1
+
+    ${concatStringsSep "\n" zshVariables}
+    ${config.system.build.setAliases.text}
+
+    ${cfg.loginShellInit}
+
+    # Read system-wide modifications.
+    if test -f /etc/zprofile.local; then
+      source /etc/zprofile.local
+    elif test -f /etc/zsh/zprofile.local; then
+      source /etc/zsh/zprofile.local
+    fi
+  '';
+
+  zshrc = ''
+    # /etc/zshrc: DO NOT EDIT -- this file has been generated automatically.
+    # This file is read for interactive shells.
+
+    # Only execute this file once per shell.
+    if [ -n "$__ETC_ZSHRC_SOURCED" -o -n "$NOSYSZSHRC" ]; then return; fi
+    __ETC_ZSHRC_SOURCED=1
+
+    # history defaults
+    SAVEHIST=2000
+    HISTSIZE=2000
+    HISTFILE=$HOME/.zsh_history
+
+    setopt HIST_IGNORE_DUPS SHARE_HISTORY HIST_FCNTL_LOCK
+
+    bindkey -e
+
+    ${config.environment.interactiveShellInit}
+    ${cfg.interactiveShellInit}
+
+    ${cfg.promptInit}
+
+    ${optionalString cfg.enableGlobalCompInit "autoload -U compinit && compinit"}
+    ${optionalString cfg.enableBashCompletion "autoload -U bashcompinit && bashcompinit"}
+
+    ${optionalString cfg.enableSyntaxHighlighting
+      "source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+    }
+
+    ${optionalString cfg.enableFastSyntaxHighlighting
+      "source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh-fast-syntax-highlighting/zsh-fast-syntax-highlighting.zsh"
+    }
+
+    ${optionalString cfg.enableFzfCompletion "source ${fzfCompletion}"}
+    ${optionalString cfg.enableFzfGit "source ${fzfGit}"}
+    ${optionalString cfg.enableFzfHistory "source ${fzfHistory}"}
+
+    # Read system-wide modifications.
+    if test -f /etc/zshrc.local; then
+      source /etc/zshrc.local
+    elif test -f /etc/zsh/zshrc.local; then
+      source /etc/zsh/zshrc.local
+    fi
+  '';
 in
 
 {
@@ -128,111 +223,35 @@ in
 
     environment.pathsToLink = [ "/share/zsh" ];
 
-    environment.etc."zshenv".text = ''
-      # /etc/zshenv: DO NOT EDIT -- this file has been generated automatically.
-      # This file is read for all shells.
+    environment.etc."zshenv".text = zshenv;
+    environment.etc."zsh/zshenv".text = zshenv;
 
-      # Only execute this file once per shell.
-      if [ -n "''${__ETC_ZSHENV_SOURCED-}" ]; then return; fi
-      __ETC_ZSHENV_SOURCED=1
+    environment.etc."zprofile".text = zprofile;
+    environment.etc."zsh/zprofile".text = zprofile;
 
-      if [[ -o rcs ]]; then
-        if [ -z "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then
-          . ${config.system.build.setEnvironment}
-        fi
-
-        # Tell zsh how to find installed completions
-        for p in ''${(z)NIX_PROFILES}; do
-          fpath=($p/share/zsh/site-functions $p/share/zsh/$ZSH_VERSION/functions $p/share/zsh/vendor-completions $fpath)
-        done
-
-        ${cfg.shellInit}
-      fi
-
-      # Read system-wide modifications.
-      if test -f /etc/zshenv.local; then
-        source /etc/zshenv.local
-      fi
-    '';
-
-    environment.etc."zprofile".text = ''
-      # /etc/zprofile: DO NOT EDIT -- this file has been generated automatically.
-      # This file is read for login shells.
-
-      # Only execute this file once per shell.
-      if [ -n "''${__ETC_ZPROFILE_SOURCED-}" ]; then return; fi
-      __ETC_ZPROFILE_SOURCED=1
-
-      ${concatStringsSep "\n" zshVariables}
-      ${config.system.build.setAliases.text}
-
-      ${cfg.loginShellInit}
-
-      # Read system-wide modifications.
-      if test -f /etc/zprofile.local; then
-        source /etc/zprofile.local
-      fi
-    '';
-
-    environment.etc."zshrc".text = ''
-      # /etc/zshrc: DO NOT EDIT -- this file has been generated automatically.
-      # This file is read for interactive shells.
-
-      # Only execute this file once per shell.
-      if [ -n "$__ETC_ZSHRC_SOURCED" -o -n "$NOSYSZSHRC" ]; then return; fi
-      __ETC_ZSHRC_SOURCED=1
-
-      # history defaults
-      SAVEHIST=2000
-      HISTSIZE=2000
-      HISTFILE=$HOME/.zsh_history
-
-      setopt HIST_IGNORE_DUPS SHARE_HISTORY HIST_FCNTL_LOCK
-
-      bindkey -e
-
-      ${config.environment.interactiveShellInit}
-      ${cfg.interactiveShellInit}
-
-      ${cfg.promptInit}
-
-      ${optionalString cfg.enableGlobalCompInit "autoload -U compinit && compinit"}
-      ${optionalString cfg.enableBashCompletion "autoload -U bashcompinit && bashcompinit"}
-
-      ${optionalString cfg.enableSyntaxHighlighting
-        "source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-      }
-
-      ${optionalString cfg.enableFastSyntaxHighlighting
-        "source ${pkgs.zsh-fast-syntax-highlighting}/share/zsh-fast-syntax-highlighting/zsh-fast-syntax-highlighting.zsh"
-      }
-
-      ${optionalString cfg.enableFzfCompletion "source ${fzfCompletion}"}
-      ${optionalString cfg.enableFzfGit "source ${fzfGit}"}
-      ${optionalString cfg.enableFzfHistory "source ${fzfHistory}"}
-
-      # Read system-wide modifications.
-      if test -f /etc/zshrc.local; then
-        source /etc/zshrc.local
-      fi
-    '';
+    environment.etc."zshrc".text = zshrc;
+    environment.etc."zsh/zshrc".text = zshrc;
 
     environment.etc."zprofile".knownSha256Hashes = [
       "db8422f92d8cff684e418f2dcffbb98c10fe544b5e8cd588b2009c7fa89559c5"
       "0235d3c1b6cf21e7043fbc98e239ee4bc648048aafaf6be1a94a576300584ef2"  # macOS
     ];
+    environment.etc."etc/zprofile".knownSha256Hashes = config.environment.etc."zprofile".knownSha256Hashes;
 
     environment.etc."zshrc".knownSha256Hashes = [
       "19a2d673ffd47b8bed71c5218ff6617dfc5e8533b240b9ba79142a45f8823c23"
       "fb5827cb4712b7e7932d438067ec4852c8955a9ff0f55e282473684623ebdfa1"  # macOS
       "c5a00c072c920f46216454978c44df044b2ec6d03409dc492c7bdcd92c94a110"  # official Nix installer
       "40b0d8751adae5b0100a4f863be5b75613a49f62706427e92604f7e04d2e2261"  # official Nix installer
+      "87809e49352a19224ab3ecf88d5f3869581e8c3391331570b0d1febb8800578f"  # official Nix installer
       "2af1b563e389d11b76a651b446e858116d7a20370d9120a7e9f78991f3e5f336"  # DeterminateSystems installer
     ];
+    environment.etc."etc/zshrc".knownSha256Hashes = config.environment.etc."zshrc".knownSha256Hashes;
 
     environment.etc."zshenv".knownSha256Hashes = [
       "d07015be6875f134976fce84c6c7a77b512079c1c5f9594dfa65c70b7968b65f"  # DeterminateSystems installer
     ];
+    environment.etc."etc/zshenv".knownSha256Hashes = config.environment.etc."zshenv".knownSha256Hashes;
 
   };
 }

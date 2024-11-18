@@ -8,18 +8,18 @@ let
 
   cfg = config.system.checks;
 
-  darwinChanges = ''
-    darwinChanges=/dev/null
-    if test -e /run/current-system/darwin-changes; then
-      darwinChanges=/run/current-system/darwin-changes
+  linuxChanges = ''
+    linuxChanges=/dev/null
+    if test -e /run/current-system/linux-changes; then
+      linuxChanges=/run/current-system/linux-changes
     fi
 
-    darwinChanges=$(diff --changed-group-format='%>' --unchanged-group-format= /run/current-system/darwin-changes $systemConfig/darwin-changes 2> /dev/null) || true
-    if test -n "$darwinChanges"; then
+    linuxChanges=$(diff --changed-group-format='%>' --unchanged-group-format= /run/current-system/linux-changes $systemConfig/linux-changes 2> /dev/null) || true
+    if test -n "$linuxChanges"; then
       echo >&2
       echo "[1;1mCHANGELOG[0m" >&2
       echo >&2
-      echo "$darwinChanges" >&2
+      echo "$linuxChanges" >&2
       echo >&2
     fi
   '';
@@ -95,7 +95,7 @@ let
     if [[ -z "$buildUser" ]]; then
         echo "[1;31merror: Using the nix-daemon requires build users, aborting activation[0m" >&2
         echo "Create the build users or disable the daemon:" >&2
-        echo "$ darwin-install" >&2
+        echo "$ linux-install" >&2
         echo >&2
         echo "or set (this requires some manual intervention to restore permissions)" >&2
         echo >&2
@@ -111,12 +111,12 @@ let
     if [[ $buildGroupID != "$expectedBuildGroupID" ]]; then
         printf >&2 '\e[1;31merror: Build user group has mismatching GID, aborting activation\e[0m\n'
         printf >&2 'The default Nix build user group ID was changed from 30000 to 350.\n'
-        printf >&2 'You are currently managing Nix build users with nix-darwin, but your\n'
+        printf >&2 'You are currently managing Nix build users with nix-not-nixos, but your\n'
         printf >&2 'nixbld group has GID %d, whereas we expected %d.\n' \
           "$buildGroupID" "$expectedBuildGroupID"
         printf >&2 '\n'
         printf >&2 'Possible causes include setting up a new Nix installation with an\n'
-        printf >&2 'existing nix-darwin configuration, setting up a new nix-darwin\n'
+        printf >&2 'existing nix-not-nixos configuration, setting up a new nix-not-nixos\n'
         printf >&2 'installation with an existing Nix installation, or manually increasing\n'
         # shellcheck disable=SC2016
         printf >&2 'your `system.stateVersion` setting.\n'
@@ -193,30 +193,30 @@ let
   nixPath = ''
     nixPath=${concatMapStringsSep ":" escapeDoubleQuote config.nix.nixPath}:$HOME/.nix-defexpr/channels
 
-    darwinConfig=$(NIX_PATH=$nixPath nix-instantiate --find-file darwin-config) || true
-    if ! test -e "$darwinConfig"; then
-        echo "[1;31merror: Changed <darwin-config> but target does not exist, aborting activation[0m" >&2
-        echo "Create ''${darwinConfig:-~/.nixpkgs/darwin-configuration.nix} or set environment.darwinConfig:" >&2
+    linuxConfig=$(NIX_PATH=$nixPath nix-instantiate --find-file linux-config) || true
+    if ! test -e "$linuxConfig"; then
+        echo "[1;31merror: Changed <linux-config> but target does not exist, aborting activation[0m" >&2
+        echo "Create ''${linuxConfig:-~/.nixpkgs/linux-configuration.nix} or set environment.linuxConfig:" >&2
         echo >&2
-        echo "    environment.darwinConfig = \"$(nix-instantiate --find-file darwin-config 2> /dev/null || echo '***')\";" >&2
+        echo "    environment.linuxConfig = \"$(nix-instantiate --find-file linux-config 2> /dev/null || echo '***')\";" >&2
         echo >&2
         echo "And rebuild using (only required once)" >&2
-        echo "$ darwin-rebuild switch -I \"darwin-config=$(nix-instantiate --find-file darwin-config 2> /dev/null || echo '***')\"" >&2
+        echo "$ linux-rebuild switch -I \"linux-config=$(nix-instantiate --find-file linux-config 2> /dev/null || echo '***')\"" >&2
         echo >&2
         echo >&2
         exit 2
     fi
 
-    darwinPath=$(NIX_PATH=$nixPath nix-instantiate --find-file darwin) || true
-    if ! test -e "$darwinPath"; then
-        echo "[1;31merror: Changed <darwin> but target does not exist, aborting activation[0m" >&2
-        echo "Add the darwin repo as a channel or set nix.nixPath:" >&2
-        echo "$ nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwin" >&2
+    linuxPath=$(NIX_PATH=$nixPath nix-instantiate --find-file nix-not-nixos) || true
+    if ! test -e "$linuxPath"; then
+        echo "[1;31merror: Changed <nix-not-nixos> but target does not exist, aborting activation[0m" >&2
+        echo "Add the nix-not-nixos repo as a channel or set nix.nixPath:" >&2
+        echo "$ nix-channel --add https://github.com/null2264/nix-darwin/archive/dev/nix-not-nixos.tar.gz nix-not-nixos" >&2
         echo "$ nix-channel --update" >&2
         echo >&2
         echo "or set" >&2
         echo >&2
-        echo "    nix.nixPath = [ \"darwin=$(nix-instantiate --find-file darwin 2> /dev/null || echo '***')\" ];" >&2
+        echo "    nix.nixPath = [ \"nix-not-nixos=$(nix-instantiate --find-file nix-not-nixos 2> /dev/null || echo '***')\" ];" >&2
         echo >&2
         exit 2
     fi
@@ -284,7 +284,7 @@ let
         printf >&2 'authorized keys files when the setting for a given user was removed.\n'
         printf >&2 '\n'
         printf >&2 "This means that if you previously stopped managing a user's authorized\n"
-        printf >&2 'SSH keys with nix-darwin, or intended to revoke their access by\n'
+        printf >&2 'SSH keys with nix-not-nixos, or intended to revoke their access by\n'
         printf >&2 'removing the option, the previous set of keys could still be used to\n'
         printf >&2 'log in as that user.\n'
         printf >&2 '\n'
@@ -342,16 +342,16 @@ in
   config = {
 
     system.checks.text = mkMerge [
-      darwinChanges
+      linuxChanges
       runLink
-      (mkIf (cfg.verifyBuildUsers && !config.nix.configureBuildUsers) oldBuildUsers)
-      (mkIf cfg.verifyBuildUsers buildUsers)
-      (mkIf cfg.verifyBuildUsers preSequoiaBuildUsers)
-      (mkIf config.nix.configureBuildUsers buildGroupID)
-      nixDaemon
+      # (mkIf (cfg.verifyBuildUsers && !config.nix.configureBuildUsers) oldBuildUsers)
+      # (mkIf cfg.verifyBuildUsers buildUsers)
+      # (mkIf cfg.verifyBuildUsers preSequoiaBuildUsers)
+      # (mkIf config.nix.configureBuildUsers buildGroupID)
+      # nixDaemon
       nixStore
-      (mkIf (config.nix.gc.automatic && config.nix.gc.user == null) nixGarbageCollector)
-      (mkIf (config.nix.optimise.automatic && config.nix.optimise.user == null) nixStoreOptimiser)
+      #(mkIf (config.nix.gc.automatic && config.nix.gc.user == null) nixGarbageCollector)
+      #(mkIf (config.nix.optimise.automatic && config.nix.optimise.user == null) nixStoreOptimiser)
       (mkIf cfg.verifyNixChannels nixChannels)
       nixInstaller
       (mkIf cfg.verifyNixPath nixPath)

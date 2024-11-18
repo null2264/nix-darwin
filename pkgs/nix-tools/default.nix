@@ -22,28 +22,28 @@ let
   path = "${extraPath}:${systemPath}";
 in
 {
-  darwin-option = writeProgram "darwin-option"
+  linux-option = writeProgram "linux-option"
     {
       inherit path;
       inherit (stdenv) shell;
     }
-    ./darwin-option.sh;
+    ./linux-option.sh;
 
-  darwin-rebuild = writeProgram "darwin-rebuild"
+  linux-rebuild = writeProgram "linux-rebuild"
     {
       inherit path profile;
       inherit (stdenv) shell;
       postInstall = ''
         mkdir -p $out/share/zsh/site-functions
-        cp ${./darwin-rebuild.zsh-completions} $out/share/zsh/site-functions/_darwin-rebuild
+        cp ${./linux-rebuild.zsh-completions} $out/share/zsh/site-functions/_linux-rebuild
       '';
     }
-    ./darwin-rebuild.sh;
+    ./linux-rebuild.sh;
 
-  darwin-version = writeProgram "darwin-version"
+  linux-version = writeProgram "linux-version"
     {
       inherit (stdenv) shell;
       path = lib.makeBinPath [ jq ];
     }
-    ./darwin-version.sh;
+    ./linux-version.sh;
 }

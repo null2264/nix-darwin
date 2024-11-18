@@ -1,5 +1,5 @@
 { nixpkgs ? <nixpkgs>
-, configuration ? <darwin-config>
+, configuration ? <linux-config>
 , lib ? pkgs.lib
 , pkgs ? import nixpkgs { inherit system; }
 , system ? builtins.currentSystem
@@ -17,18 +17,18 @@ let
   };
 
   # The source code of this repo needed by the installer.
-  nix-darwin = lib.cleanSource (
+  nix-not-nixos = lib.cleanSource (
     lib.cleanSourceWith {
       # We explicitly specify a name here otherwise `cleanSource` will use the
       # basename of ./.  which might be different for different clones of this
       # repo leading to non-reproducible outputs.
-      name = "nix-darwin";
+      name = "nix-not-nixos";
       src = ./.;
     }
   );
 in
 
 eval // {
-  installer = pkgs.callPackage ./pkgs/darwin-installer { inherit nix-darwin; };
-  uninstaller = pkgs.callPackage ./pkgs/darwin-uninstaller { };
+  installer = pkgs.callPackage ./pkgs/linux-installer { inherit nix-not-nixos; };
+  uninstaller = pkgs.callPackage ./pkgs/linux-uninstaller { };
 }

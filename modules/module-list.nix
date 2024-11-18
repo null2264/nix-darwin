@@ -47,56 +47,15 @@
   ./networking
   ./nix
   ./nix/linux-builder.nix
-  ./nix/nix-darwin.nix
+  ./nix/nix-not-nixos.nix
   ./nix/nixpkgs.nix
   ./nix/nixpkgs-flake.nix
   ./environment
   ./fonts
-  ./launchd
+  ./launchd  # TODO: Remove
+  ./systemd
   ./power
   ./power/sleep.nix
-  ./services/activate-system
-  ./services/aerospace
-  ./services/autossh.nix
-  ./services/buildkite-agents.nix
-  ./services/chunkwm.nix
-  ./services/cachix-agent.nix
-  ./services/dnsmasq.nix
-  ./services/emacs.nix
-  ./services/eternal-terminal.nix
-  ./services/github-runner
-  ./services/gitlab-runner.nix
-  ./services/hercules-ci-agent
-  ./services/ipfs.nix
-  ./services/karabiner-elements
-  ./services/khd
-  ./services/kwm
-  ./services/lorri.nix
-  ./services/mail/offlineimap.nix
-  ./services/mopidy.nix
-  ./services/monitoring/telegraf.nix
-  ./services/monitoring/netdata.nix
-  ./services/monitoring/prometheus-node-exporter.nix
-  ./services/netbird.nix
-  ./services/nix-daemon.nix
-  ./services/nix-gc
-  ./services/nix-optimise
-  ./services/ofborg
-  ./services/postgresql
-  ./services/privoxy
-  ./services/redis
-  ./services/sketchybar
-  ./services/skhd
-  ./services/spacebar
-  ./services/spotifyd.nix
-  ./services/synapse-bt.nix
-  ./services/synergy
-  ./services/tailscale.nix
-  ./services/trezord.nix
-  ./services/wg-quick.nix
-  ./services/yabai
-  ./services/nextdns
-  ./services/jankyborders
   ./programs/bash
   ./programs/direnv.nix
   ./programs/fish.nix

@@ -84,6 +84,7 @@ in
     security.pki.certificateFiles = [ "${cacertPackage}/etc/ssl/certs/ca-bundle.crt" ];
 
     environment.etc."ssl/certs/ca-certificates.crt".source = caCertificates;
+    environment.etc."ssl/certs/ca-certificates.crt".knownSha256Hashes = [ "SKIP" ];
     environment.variables.NIX_SSL_CERT_FILE = mkDefault "/etc/ssl/certs/ca-certificates.crt";
 
   };

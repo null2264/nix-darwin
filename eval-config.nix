@@ -16,7 +16,7 @@ let
   };
 
   eval = lib.evalModules (builtins.removeAttrs args [ "lib" ] // {
-    class = "darwin";
+    class = "nix-not-nixos";
     modules = modules ++ [ argsModule ] ++ baseModules;
     specialArgs = { modulesPath = builtins.toString ./modules; } // specialArgs;
   });

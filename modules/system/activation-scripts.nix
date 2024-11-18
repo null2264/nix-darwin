@@ -58,21 +58,24 @@ in
       ${cfg.activationScripts.extraActivation.text}
       ${cfg.activationScripts.groups.text}
       ${cfg.activationScripts.users.text}
-      ${cfg.activationScripts.applications.text}
+      # FIXME: applications -> *.desktop?
       ${cfg.activationScripts.pam.text}
       ${cfg.activationScripts.patches.text}
       ${cfg.activationScripts.etc.text}
       ${cfg.activationScripts.defaults.text}
-      ${cfg.activationScripts.launchd.text}
+      # FIXME: launchd -> systemd
       ${cfg.activationScripts.nix-daemon.text}
       ${cfg.activationScripts.time.text}
       ${cfg.activationScripts.networking.text}
       ${cfg.activationScripts.power.text}
       ${cfg.activationScripts.keyboard.text}
       ${cfg.activationScripts.fonts.text}
-      ${cfg.activationScripts.nvram.text}
+      # FIXME: nvram, remove?
 
       ${cfg.activationScripts.postActivation.text}
+
+      # In case /run/ is not present
+      mkdir -p /run
 
       # Make this configuration the current configuration.
       # The readlink is there to ensure that when $systemConfig = /system
@@ -105,13 +108,13 @@ in
 
       # This should be running at the system level, but as user activation runs first
       # we run it here with sudo
-      ${cfg.activationScripts.createRun.text}
+      # FIXME: base.nix:createRun, remove?
       ${cfg.activationScripts.checks.text}
       ${cfg.activationScripts.etcChecks.text}
       ${cfg.activationScripts.extraUserActivation.text}
-      ${cfg.activationScripts.userDefaults.text}
-      ${cfg.activationScripts.userLaunchd.text}
-      ${cfg.activationScripts.homebrew.text}
+      # FIXME: userDefaults (modules/users/...), remove dscl dependency
+      # FIXME: launchd -> systemd
+      # FIXME: homebrew, remove?
 
       ${cfg.activationScripts.postUserActivation.text}
 

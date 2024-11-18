@@ -68,7 +68,10 @@ in
             etcFileSha256Output=$(shasum -a 256 "$etcFile")
             etcFileSha256Hash=''${etcFileSha256Output%% *}
             for knownSha256Hash in ''${etcSha256Hashes[$subPath]}; do
-              if [[ $etcFileSha256Hash == "$knownSha256Hash" ]]; then
+              if [[
+                $etcFileSha256Hash == "$knownSha256Hash"
+                || $knownSha256Hash == "SKIP"
+              ]]; then
                 # Hash matches, OK to overwrite; go to the next file.
                 continue 2
               fi
@@ -85,7 +88,7 @@ in
         printf >&2 'overwritten:\n\n'
         printf >&2 '  %s\n' "''${etcProblems[@]}"
         printf >&2 '\nPlease check there is nothing critical in these files, '
-        printf >&2 'rename them by adding .before-nix-darwin to the end, and '
+        printf >&2 'rename them by adding .before-nix-not-nixos to the end, and '
         printf >&2 'then try again.\n'
         exit 2
       fi
@@ -109,7 +112,7 @@ in
           if [[ $(readlink -- "$etcFile") == "$etcStaticFile" ]]; then
             continue
           else
-            mv "$etcFile" "$etcFile.before-nix-darwin"
+            mv "$etcFile" "$etcFile.before-nix-not-nixos"
           fi
         fi
 

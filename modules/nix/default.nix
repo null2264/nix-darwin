@@ -54,7 +54,7 @@ let
       name = "nix.conf";
       text = ''
         # WARNING: this file is generated from the nix.* options in
-        # your nix-darwin configuration. Do not edit it!
+        # your nix-not-nixos configuration. Do not edit it!
         ${mkKeyValuePairs cfg.settings}
         ${cfg.extraOptions}
       '';
@@ -139,18 +139,18 @@ in
 {
   imports =
     let
-      altOption = alt: "No `nix-darwin` equivalent to this NixOS option, consider using `${alt}` instead.";
+      altOption = alt: "No `nix-not-nixos` equivalent to this NixOS option, consider using `${alt}` instead.";
       consider = alt: "Consider using `${alt}` instead.";
     in
     [
       # Only ever in NixOS
-      (mkRemovedOptionModule [ "nix" "enable" ] "No `nix-darwin` equivalent to this NixOS option.")
+      (mkRemovedOptionModule [ "nix" "enable" ] "No `nix-not-nixos` equivalent to this NixOS option.")
       (mkRemovedOptionModule [ "nix" "daemonCPUSchedPolicy" ] (altOption "nix.daemonProcessType"))
       (mkRemovedOptionModule [ "nix" "daemonIOSchedClass" ] (altOption "nix.daemonProcessType"))
       (mkRemovedOptionModule [ "nix" "daemonIOSchedPriority" ] (altOption "nix.daemonIOLowPriority"))
-      (mkRemovedOptionModule [ "nix" "readOnlyStore" ] "No `nix-darwin` equivalent to this NixOS option.")
+      (mkRemovedOptionModule [ "nix" "readOnlyStore" ] "No `nix-not-nixos` equivalent to this NixOS option.")
 
-      # Option changes in `nix-darwin`
+      # Option changes in `nix-not-nixos`
       (mkRemovedOptionModule [ "nix" "profile" ] "Use `nix.package` instead.")
       (mkRemovedOptionModule [ "nix" "version" ] (consider "nix.package.version"))
       (mkRenamedOptionModule [ "users" "nix" "configureBuildUsers" ] [ "nix" "configureBuildUsers" ])
@@ -397,15 +397,15 @@ in
       nixPath = mkOption {
         type = nixPathType;
         default = lib.optionals cfg.channel.enable [
-          # Include default path <darwin-config>.
-          { darwin-config = "${config.environment.darwinConfig}"; }
+          # Include default path <linux-config>.
+          { linux-config = "${config.environment.linuxConfig}"; }
           "/nix/var/nix/profiles/per-user/root/channels"
         ];
 
         defaultText = lib.literalExpression ''
           lib.optionals cfg.channel.enable [
-            # Include default path <darwin-config>.
-            { darwin-config = "''${config.environment.darwinConfig}"; }
+            # Include default path <linux-config>.
+            { linux-config = "''${config.environment.linuxConfig}"; }
             "/nix/var/nix/profiles/per-user/root/channels"
           ]
         '';
@@ -776,8 +776,8 @@ in
 
     # Not in NixOS module
     nix.nixPath = mkIf (config.system.stateVersion < 2) (mkDefault [
-      "darwin=$HOME/.nix-defexpr/darwin"
-      "darwin-config=$HOME/.nixpkgs/darwin-configuration.nix"
+      "nix-not-nixos=$HOME/.nix-defexpr/nix-not-nixos"
+      "linux-config=$HOME/.nixpkgs/linux-configuration.nix"
       "/nix/var/nix/profiles/per-user/root/channels"
     ]);
 
@@ -827,11 +827,11 @@ in
     system.activationScripts.nix-daemon.text = mkIf cfg.useDaemon ''
       if ! diff /etc/nix/nix.conf /run/current-system/etc/nix/nix.conf &> /dev/null || ! diff /etc/nix/machines /run/current-system/etc/nix/machines &> /dev/null; then
           echo "reloading nix-daemon..." >&2
-          launchctl kill HUP system/org.nixos.nix-daemon
+          systemctl stop nix-daemon.socket nix-daemon
       fi
       while ! nix-store --store daemon -q --hash ${pkgs.stdenv.shell} &>/dev/null; do
           echo "waiting for nix-daemon" >&2
-          launchctl kickstart system/org.nixos.nix-daemon
+          systemctl start nix-daemon.socket nix-daemon
       done
     '';
 

@@ -30,10 +30,10 @@ in
     system.build.fonts = pkgs.runCommand "fonts"
       { preferLocalBuild = true; }
       ''
-        mkdir -p $out/Library/Fonts
+        mkdir -p $out/usr/share/fonts
         store_dir=${lib.escapeShellArg builtins.storeDir}
         while IFS= read -rd "" f; do
-          dest="$out/Library/Fonts/Nix Fonts/''${f#"$store_dir/"}"
+          dest="$out/usr/share/fonts/nix-fonts/''${f#"$store_dir/"}"
           mkdir -p "''${dest%/*}"
           ln -sf "$f" "$dest"
         done < <(
@@ -45,22 +45,25 @@ in
       '';
 
     system.activationScripts.fonts.text = ''
-      printf >&2 'setting up /Library/Fonts/Nix Fonts...\n'
+      printf >&2 'setting up /usr/share/fonts/nix-fonts...\n'
+      destParent="/usr/share/fonts"
+      dest="''${destParent}/nix-fonts"
 
-      # rsync uses the mtime + size of files to determine whether they
-      # need to be copied by default. This is inadequate for Nix store
-      # paths, but we don't want to use `--checksum` as it makes
-      # activation consistently slow when you have large fonts
-      # installed. Instead, we ensure that fonts are linked according to
-      # their full store paths in `system.build.fonts`, so that any
-      # given font path should only ever have one possible content.
-      ${pkgs.rsync}/bin/rsync \
-        --archive \
-        --copy-links \
-        --delete-during \
-        --delete-missing-args \
-        "$systemConfig/Library/Fonts/Nix Fonts" \
-        '/Library/Fonts/'
+      # Some distro probably doesn't have this directory by default.
+      mkdir -p "$destParent"
+
+      ourLink () {
+        local link
+        link=$(readlink "$1")
+        [ -L "$1" ] && [ "$link" = "$systemConfig/usr/share/fonts/nix-fonts" ]
+      }
+
+      if [ ! -e "$dest" ] \
+         || ourLink "$dest"; then
+         ln -sfn $systemConfig/usr/share/fonts/nix-fonts "$dest"
+      else
+        echo "warning: $dest is not owned by nix-not-nixos, skipping fonts linking..." >&2
+      fi
     '';
 
   };
