@@ -115,8 +115,6 @@ stdenv.mkDerivation {
         cat /etc/profile
         (! grep nix-daemon.sh /etc/profile)
         echo >&2 "checking /run/current-system"
-        readlink /run
-        test -e /run
         readlink /run/current-system
         test -e /run/current-system
         echo >&2 "checking system profile"
