@@ -110,7 +110,9 @@ in
       "87809e49352a19224ab3ecf88d5f3869581e8c3391331570b0d1febb8800578f"  # official Nix installer
       "08ffbf991a9e25839d38b80a0d3bce3b5a6c84b9be53a4b68949df4e7e487bb7"  # DeterminateSystems installer
     ];
-    environment.etc."bash.bashrc".knownSha256Hashes = config.environment.etc."bashrc".knownSha256Hashes;
+    environment.etc."bash.bashrc".knownSha256Hashes = [
+      "89053ee31f8607bf4371cba46864bda07c51625fd19c6806a9b7bbf526aaf7f4"
+    ];
 
   };
 }
