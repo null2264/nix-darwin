@@ -1,3 +1,12 @@
+# nix-not-nixos
+
+> [!WARNING]
+> This is an experimental project!
+
+This project aims to bring NixOS modules to non-NixOS systems by using nix-darwin as its base.
+
+---
+
 [<img src="https://daiderd.com/nix-darwin/images/nix-darwin.png" width="200px" alt="logo" />](https://github.com/LnL7/nix-darwin)
 
 # nix-darwin
