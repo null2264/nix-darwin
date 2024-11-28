@@ -41,7 +41,7 @@ jobs:
         nix_path: nixpkgs=channel:${{ env.CURRENT_STABLE_CHANNEL }}
     - name: Install channels
       run: |
-        nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwin
+        nix-channel --add https://github.com/null2264/nix-darwin/archive/master.tar.gz nix-not-nixos
         nix-channel --add https://nixos.org/channels/${{ env.CURRENT_STABLE_CHANNEL }} nixpkgs
         nix-channel --update
     - name: Install nix-not-nixos and test
@@ -71,7 +71,7 @@ jobs:
         linux-rebuild switch -I linux=.
 
         hello
-    - name: Test uninstallation of nix-darwin
+    - name: Test uninstallation of nix-not-nixos
       run: |
         # We need to specify `--extra-experimental-features` because `experimental-features` is set by
         # `cachix/install-nix-action` but not by our default config above
@@ -94,7 +94,7 @@ jobs:
         nix_path: nixpkgs=channel:nixpkgs-unstable
     - name: Install channels
       run: |
-        nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwin
+        nix-channel --add https://github.com/null2264/nix-darwin/archive/master.tar.gz nix-not-nixos
         nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
         nix-channel --update
     - name: Install nix-not-nixos
@@ -153,7 +153,7 @@ jobs:
             "s/# programs.fish.enable = true;/nix.settings.access-tokens = [ \"github.com=\${{ secrets.GITHUB_TOKEN }}\" ]; environment.etc.\"nix\/nix.conf\".knownSha256Hashes = [ \"$nixConfHash\" ];/" \
             flake.nix
           /usr/bin/sed -i.bak \
-            's/nixpkgs.hostPlatform = "aarch64-darwin";/nixpkgs.hostPlatform = "'$(nix eval --expr builtins.currentSystem --impure --raw)'";/' \
+            's/nixpkgs.hostPlatform = "x86_64-linux";/nixpkgs.hostPlatform = "'$(nix eval --expr builtins.currentSystem --impure --raw)'";/' \
             flake.nix
         popd
         nix run .#linux-rebuild -- \
@@ -173,7 +173,7 @@ jobs:
           --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
 
         hello
-    - name: Test uninstallation of nix-darwin
+    - name: Test uninstallation of nix-not-nixos
       run: |
         nix run .#linux-uninstaller --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
         nix run .#linux-uninstaller.tests.uninstaller --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
@@ -198,7 +198,7 @@ jobs:
             "s/# programs.fish.enable = true;/nix.settings.access-tokens = [ \"github.com=\${{ secrets.GITHUB_TOKEN }}\" ]; environment.etc.\"nix\/nix.conf\".knownSha256Hashes = [ \"$nixConfHash\" ];/" \
             flake.nix
           /usr/bin/sed -i.bak \
-            's/nixpkgs.hostPlatform = "aarch64-darwin";/nixpkgs.hostPlatform = "'$(nix eval --expr builtins.currentSystem --impure --raw)'";/' \
+            's/nixpkgs.hostPlatform = "x86_64-linux";/nixpkgs.hostPlatform = "'$(nix eval --expr builtins.currentSystem --impure --raw)'";/' \
             flake.nix
         popd
         nix run .#linux-rebuild -- \

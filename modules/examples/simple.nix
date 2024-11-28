@@ -8,7 +8,7 @@
     ];
 
   # Use custom location for configuration.nix.
-  environment.darwinConfig = "$HOME/.config/nix-darwin/configuration.nix";
+  environment.linuxConfig = "$HOME/.config/nix-not-nixos/configuration.nix";
 
   # Enable alternative shell support in nix-darwin.
   # programs.fish.enable = true;
