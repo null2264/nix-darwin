@@ -12,7 +12,6 @@ env:
 jobs:
   test-stable:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
     - name: Install nix corresponding to latest stable channel
@@ -23,7 +22,6 @@ jobs:
 
   test-unstable:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
     - name: Install nix from current unstable channel
@@ -34,7 +32,6 @@ jobs:
 
   install-against-stable:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
     - name: Install nix corresponding to latest stable channel
@@ -42,43 +39,48 @@ jobs:
       with:
         install_url: https://releases.nixos.org/nix/nix-2.18.8/install
         nix_path: nixpkgs=channel:${{ env.CURRENT_STABLE_CHANNEL }}
-    - name: Install ${{ env.CURRENT_STABLE_CHANNEL }} channel
+    - name: Install channels
       run: |
+        nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwin
         nix-channel --add https://nixos.org/channels/${{ env.CURRENT_STABLE_CHANNEL }} nixpkgs
         nix-channel --update
     - name: Install nix-not-nixos and test
       run: |
         export NIX_PATH=$HOME/.nix-defexpr/channels
 
-        # We run nix-not-nixos twice to test that it can create linux-configuration correctly for us
-        # but we expect it to fail setting up /etc/nix/nix.conf
         nix-shell -A installer || true
+        mkdir -p ~/.config/nix-not-nixos
+        cp modules/examples/simple.nix ~/.config/nix-not-nixos/configuration.nix
 
         nixConfHash=$(shasum -a 256 /etc/nix/nix.conf | cut -d ' ' -f 1)
         /usr/bin/sed -i.bak \
           "s/# programs.fish.enable = true;/nix.settings.access-tokens = [ \"github.com=\${{ secrets.GITHUB_TOKEN }}\" ]; environment.etc.\"nix\/nix.conf\".knownSha256Hashes = [ \"$nixConfHash\" ];/" \
-          ~/.nixpkgs/linux-configuration.nix
+          ~/.config/nix-not-nixos/configuration.nix
 
-        nix-shell -A installer
-        nix-shell -A installer.check
-    - name: Build and activate default derivation
+        nix run .#linux-rebuild \
+          -- switch \
+          -I linux-config=$HOME/.config/nix-not-nixos/configuration.nix
+    - name: Switch to new configuration
       run: |
-        . /etc/static/bashrc
+        . /etc/bash.bashrc
+
+        /usr/bin/sed -i.bak \
+          "s/pkgs.vim/pkgs.hello/" \
+          ~/.config/nix-not-nixos/configuration.nix
+
         linux-rebuild switch -I linux=.
-    - name: Test uninstallation of nix-not-nixos
+
+        hello
+    - name: Test uninstallation of nix-darwin
       run: |
+        # We need to specify `--extra-experimental-features` because `experimental-features` is set by
+        # `cachix/install-nix-action` but not by our default config above
         nix run .#linux-uninstaller \
-          --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }} \
-          --extra-experimental-features "nix-command flakes"
+          --extra-experimental-features "nix-command flakes" \
+          --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
         nix run .#linux-uninstaller.tests.uninstaller \
-          --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }} \
-          --extra-experimental-features "nix-command flakes"
-    - name: Debugging tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
-      timeout-minutes: 15
-      with:
-        limit-access-to-actor: true
+          --extra-experimental-features "nix-command flakes" \
+          --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
 
   install-against-unstable:
     runs-on: ubuntu-latest
@@ -90,48 +92,50 @@ jobs:
       with:
         install_url: https://releases.nixos.org/nix/nix-2.24.9/install
         nix_path: nixpkgs=channel:nixpkgs-unstable
-    - name: Install nixpkgs-unstable channel
+    - name: Install channels
       run: |
+        nix-channel --add https://github.com/LnL7/nix-darwin/archive/master.tar.gz darwin
         nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
         nix-channel --update
-    - name: Install nix-not-nixos and test
+    - name: Install nix-not-nixos
       run: |
         export NIX_PATH=$HOME/.nix-defexpr/channels
 
-        # We run nix-not-nixos twice to test that it can create linux-configuration correctly for us
-        # but we expect it to fail setting up /etc/nix/nix.conf
-        nix-shell -A installer || true
+        mkdir -p ~/.config/nix-not-nixos
+        cp modules/examples/simple.nix ~/.config/nix-not-nixos/configuration.nix
 
         nixConfHash=$(shasum -a 256 /etc/nix/nix.conf | cut -d ' ' -f 1)
         /usr/bin/sed -i.bak \
           "s/# programs.fish.enable = true;/nix.settings.access-tokens = [ \"github.com=\${{ secrets.GITHUB_TOKEN }}\" ]; environment.etc.\"nix\/nix.conf\".knownSha256Hashes = [ \"$nixConfHash\" ];/" \
-          ~/.nixpkgs/linux-configuration.nix
+          ~/.config/nix-not-nixos/configuration.nix
 
-        nix-shell -A installer
-        nix-shell -A installer.check
-    - name: Build and activate default derivation
+        nix run .#linux-rebuild \
+          -- switch \
+          -I linux-config=$HOME/.config/nix-not-nixos/configuration.nix
+    - name: Switch to new configuration
       run: |
-        . /etc/static/bashrc
+        . /etc/bash.bashrc
+
+        /usr/bin/sed -i.bak \
+          "s/pkgs.vim/pkgs.hello/" \
+          ~/.config/nix-not-nixos/configuration.nix
+
         linux-rebuild switch -I linux=.
+
+        hello
     - name: Test uninstallation of nix-not-nixos
       run: |
-        # A regression in Nix 2.19 means we need to put `--extra-experimental-features` before `--override-input`
+        # We need to specify `--extra-experimental-features` because `experimental-features` is set by
+        # `cachix/install-nix-action` but not by our default config above
         nix run .#linux-uninstaller \
            --extra-experimental-features "nix-command flakes" \
            --override-input nixpkgs nixpkgs/nixpkgs-unstable
         nix run .#linux-uninstaller.tests.uninstaller \
            --extra-experimental-features "nix-command flakes" \
            --override-input nixpkgs nixpkgs/nixpkgs-unstable
-    - name: Debugging tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
-      timeout-minutes: 15
-      with:
-        limit-access-to-actor: true
 
   install-flake-against-stable:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
     - uses: actions/checkout@v4
     - name: Install nix version corresponding to latest stable channel
@@ -148,16 +152,28 @@ jobs:
           /usr/bin/sed -i.bak \
             "s/# programs.fish.enable = true;/nix.settings.access-tokens = [ \"github.com=\${{ secrets.GITHUB_TOKEN }}\" ]; environment.etc.\"nix\/nix.conf\".knownSha256Hashes = [ \"$nixConfHash\" ];/" \
             flake.nix
+          /usr/bin/sed -i.bak \
+            's/nixpkgs.hostPlatform = "aarch64-darwin";/nixpkgs.hostPlatform = "'$(nix eval --expr builtins.currentSystem --impure --raw)'";/' \
+            flake.nix
         popd
         nix run .#linux-rebuild -- \
           switch --flake ~/.config/nix-not-nixos#simple \
           --override-input nix-not-nixos . \
           --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
-    - name: Rebuild and activate simple flake, but this time using nix-not-nixos's flake interface
+    - name: Switch to new configuration
       run: |
-        . /etc/static/bashrc
-        linux-rebuild build --flake ./modules/examples/flake#simple --override-input nix-not-nixos . --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
-    - name: Test uninstallation of nix-not-nixos
+        . /etc/bash.bashrc
+
+        /usr/bin/sed -i.bak \
+          "s/pkgs.vim/pkgs.hello/" \
+          ~/.config/nix-not-nixos/flake.nix
+
+        linux-rebuild switch --flake ~/.config/nix-not-nixos#simple \
+          --override-input nix-not-nixos . \
+          --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
+
+        hello
+    - name: Test uninstallation of nix-darwin
       run: |
         nix run .#linux-uninstaller --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
         nix run .#linux-uninstaller.tests.uninstaller --override-input nixpkgs nixpkgs/${{ env.CURRENT_STABLE_CHANNEL }}
@@ -181,6 +197,9 @@ jobs:
           /usr/bin/sed -i.bak \
             "s/# programs.fish.enable = true;/nix.settings.access-tokens = [ \"github.com=\${{ secrets.GITHUB_TOKEN }}\" ]; environment.etc.\"nix\/nix.conf\".knownSha256Hashes = [ \"$nixConfHash\" ];/" \
             flake.nix
+          /usr/bin/sed -i.bak \
+            's/nixpkgs.hostPlatform = "aarch64-darwin";/nixpkgs.hostPlatform = "'$(nix eval --expr builtins.currentSystem --impure --raw)'";/' \
+            flake.nix
         popd
         nix run .#linux-rebuild -- \
           switch --flake ~/.config/nix-not-nixos#simple \
@@ -190,6 +209,19 @@ jobs:
       run: |
         . /etc/static/bashrc
         linux-rebuild build --flake ./modules/examples/flake#simple --override-input nix-not-nixos . --override-input nixpkgs nixpkgs/nixpkgs-unstable
+    - name: Switch to new configuration
+      run: |
+        . /etc/bash.bashrc
+
+        /usr/bin/sed -i.bak \
+          "s/pkgs.vim/pkgs.hello/" \
+          ~/.config/nix-not-nixos/flake.nix
+
+        linux-rebuild switch --flake ~/.config/nix-not-nixos#simple \
+          --override-input nix-not-nixos . \
+          --override-input nixpkgs nixpkgs/nixpkgs-unstable
+
+        hello
     - name: Test uninstallation of nix-not-nixos
       run: |
         nix run .#linux-uninstaller --override-input nixpkgs nixpkgs/nixpkgs-unstable

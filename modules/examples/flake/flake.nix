@@ -39,8 +39,5 @@
     linuxConfigurations."simple" = nix-not-nixos.lib.linuxSystem {
       modules = [ configuration ];
     };
-
-    # Expose the package set, including overlays, for convenience.
-    linuxPackages = self.linuxConfigurations."simple".pkgs;
   };
 }
